@@ -3,18 +3,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import heroImage from "@/assets/final1200x600.png";
 import TrackingModal from "./TrackingModal";
-
+import { toast } from "react-toastify";
+import {useNavigate} from 'react-router-dom'
 const HeroSection = () => {
+  const navigate = useNavigate();
   const [trackingNumber, setTrackingNumber] = useState("");
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
-
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+   
+                    if (name === "BiltyNo") {
+            // Sirf digits allow karo aur max 12 tak
+            const onlyNumbers = value.replace(/\D/g, ""); // non-digits remove
+            if (onlyNumbers.length <= 12) {
+              setTrackingNumber(value)
+            }
+            return;
+          }
+  }
   const handleTrack = () => {
-    if (trackingNumber.trim()) {
-      // Handle tracking logic here
-      console.log("Tracking:", trackingNumber);
+    if (trackingNumber.length !== 12) {
+      toast.error("Tracking No must be exactly 12 digits");
+      return;
     }
+    navigate(`/track/?invoice=${trackingNumber}`)
   };
-
   return (
     <section className="relative min-h-screen flex items-center pt-16 lg:pt-20">
       {/* Background Image */}
@@ -45,7 +58,7 @@ const HeroSection = () => {
                   type="text"
                   placeholder="Enter Invoice No."
                   value={trackingNumber}
-                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  onChange={handleChange}
                   className="flex-1"
                 />
                 <Button

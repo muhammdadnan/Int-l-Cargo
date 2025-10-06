@@ -26,6 +26,7 @@ import ContainerBulkStatus from "@/pages/container-bulk-status";
 import AdminPannel from "@/pages/admin-pannel";
 import AdminPannelAction from "@/pages/AdminPannelAction";
 import WhatsAppMarketing from "@/pages/whatsapp-marketing";
+import Tracking from "./pages/tracking";
 
 
 const queryClient = new QueryClient();
@@ -50,21 +51,22 @@ return  <QueryClientProvider client={queryClient}>
         <Routes>
           {/* 1. HOME/INDEX ROUTE (Public, No Redirect) */}
           <Route path="/" element={<Index />} />
+          <Route path="/track" element={<Tracking />} />
           <Route element={<Layout/>}>
             <Route element={<ProtectedRoute/>}>
-            <Route path='/add-booking' element={<AddBooking/>}/> 
-            <Route path='/edit-booking/edit/:id' element={<EditBooking/>}/> 
-            <Route path='/container' element={<ContainerBooking/>}/> 
-            <Route path='/all-bookings' element={<BookingList/>}/> 
-            <Route path='/all-containers' element={<ContainerList/>}/> 
-            <Route path='/all-container-bulk-status' element={<ContainerBulkStatus/>}/> 
-            <Route path={'/admin-pannel'} element={<AdminPannel/>}/>        
-            <Route path={'/admin-pannel-action'} element={<AdminPannelAction/>}/>        
-            <Route path="/update-container/edit/:id" element={<UpdateContainer />} />
-            <Route path="/edit-container/edit/:id" element={<EditContainer />} />
-            <Route path="/whatsapp-marketing" element={<WhatsAppMarketing />} />
-            <Route path='/services' element={<Services/>}/> 
-          </Route>
+              <Route path='/add-booking' element={<AddBooking/>}/> 
+              <Route path='/edit-booking/edit/:id' element={<EditBooking/>}/> 
+              <Route path='/container' element={<ContainerBooking/>}/> 
+              <Route path='/all-bookings' element={<BookingList/>}/> 
+              <Route path='/all-containers' element={<ContainerList/>}/> 
+              <Route path='/all-container-bulk-status' element={<ContainerBulkStatus/>}/> 
+              <Route path={'/admin-pannel'} element={<AdminPannel/>}/>        
+              <Route path={'/admin-pannel-action'} element={<AdminPannelAction/>}/>        
+              <Route path="/update-container/edit/:id" element={<UpdateContainer />} />
+              <Route path="/edit-container/edit/:id" element={<EditContainer />} />
+              <Route path="/whatsapp-marketing" element={<WhatsAppMarketing />} />
+              <Route path='/services' element={<Services/>}/> 
+            </Route>
           </Route>
           
           <Route element={<PublicRoute/>}>
