@@ -7,8 +7,8 @@ import { AppRoutes } from '@/constants/AppRoutes';
 import {useAuth} from '@/context/AuthContext'
 import { LocationItem, InvoiceFormProps } from '@/lib/helper/type';  
 const AddBooking = () => {
-  const [branchList, setBranchList] = useState<LocationItem[]>([]);
-    const [cityList, setCityList] = useState<LocationItem[]>([]);
+  const [branchList, setBranchList] = useState([]);
+    const [cityList, setCityList] = useState([]);
     const [loadingList, setLoadingList] = useState(false);
   const {loading} = useAuth()  
   useEffect(() => {
@@ -17,8 +17,8 @@ const AddBooking = () => {
           loading == false && setLoadingList(true) 
           
           const [branchRes, cityRes] = await Promise.all([
-                    axios.get<{ data: { allBranches: LocationItem[] } }>(AppRoutes.allBranch),
-                    axios.get<{ data: { allCities: LocationItem[] } }>(AppRoutes.allCity),
+                    axios.get<{ data: { allBranches } }>(AppRoutes.allBranch),
+                    axios.get<{ data: { allCities } }>(AppRoutes.allCity),
                 ]);
           const allBranches = branchRes.data?.data?.allBranches || [];
           const allCities = cityRes.data?.data?.allCities || [];
