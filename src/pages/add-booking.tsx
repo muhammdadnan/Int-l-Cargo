@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import { AppRoutes } from '@/constants/AppRoutes';
 import {useAuth} from '@/context/AuthContext'
-import { LocationItem, InvoiceFormProps } from '@/lib/helper/type';  
 const AddBooking = () => {
   const [branchList, setBranchList] = useState([]);
     const [cityList, setCityList] = useState([]);

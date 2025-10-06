@@ -6,7 +6,7 @@
   import {handlePdfSave} from '@/lib/helper/pdfGenerator'
 import { handleSend } from '@/lib/helper/sendPdf';
 import PhoneNumberInput from './PhoneNumberInput';
-import { BookingFormData, ChargeItem, Charges, InvoiceFormProps, LocationItem } from '@/lib/helper/type'
+import { BookingFormData, ChargeItem, Charges} from '@/lib/helper/type'
 
 const InvoiceForm = ({cityList,branchList,loadingList}) => {
       
