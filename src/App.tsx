@@ -25,8 +25,7 @@ import UpdateContainer from "@/pages/update-container";
 import ContainerBulkStatus from "@/pages/container-bulk-status";
 import AdminPannel from "@/pages/admin-pannel";
 import AdminPannelAction from "@/pages/AdminPannelAction";
-
-const WhatsAppMarketing = () => <div>WhatsAppMarketing Page</div>;
+import WhatsAppMarketing from "@/pages/whatsapp-marketing";
 
 
 const queryClient = new QueryClient();
