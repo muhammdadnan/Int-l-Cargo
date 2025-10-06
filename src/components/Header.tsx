@@ -12,7 +12,7 @@ const Header = () => {
     const location = useLocation();
 
     const handleLogout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setUser(null);
     navigate("/login");
     setIsMenuOpen(false);
@@ -48,7 +48,7 @@ const Header = () => {
   const logoutButton = (
     <button
       onClick={handleLogout}
-      className="text-gray-800 font-medium underline hover:text-gray-600 cursor-pointer"
+      className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md"
     >
       Logout
     </button>

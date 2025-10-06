@@ -12,6 +12,8 @@ import PublicRoute from '@/components/PublicRoute';
 import PrivacyPolicy from "@/pages/privacy-policy";
 import Terms from "@/pages/terms";
 import Login from "@/pages/login";
+import Services from "@/pages/services";
+import Layout from "./components/Layout";
 // import Layout from './components/Layout'; // Assuming Layout is still needed
 
 // Placeholder Components (Replace these with your actual imported components)
@@ -27,8 +29,6 @@ const AdminPannelAction = () => <div>AdminPannelAction Page</div>;
 const UpdateContainer = () => <div>UpdateContainer Page</div>;
 const EditContainer = () => <div>EditContainer Page</div>;
 const WhatsAppMarketing = () => <div>WhatsAppMarketing Page</div>;
-const UserLogin = () => <div>UserLogin Page</div>;
-const Services = () => <div>Services Page</div>;
 
 
 const queryClient = new QueryClient();
@@ -53,7 +53,8 @@ return  <QueryClientProvider client={queryClient}>
         <Routes>
           {/* 1. HOME/INDEX ROUTE (Public, No Redirect) */}
           <Route path="/" element={<Index />} />
-          <Route element={<ProtectedRoute/>}>
+          <Route element={<Layout/>}>
+            <Route element={<ProtectedRoute/>}>
             <Route path='/add-booking' element={<AddBooking/>}/> 
             <Route path='/edit-booking/edit/:id' element={<EditBooking/>}/> 
             <Route path='/container' element={<ContainerBooking/>}/> 
@@ -65,7 +66,10 @@ return  <QueryClientProvider client={queryClient}>
             <Route path="/update-container/edit/:id" element={<UpdateContainer />} />
             <Route path="/edit-container/edit/:id" element={<EditContainer />} />
             <Route path="/whatsapp-marketing" element={<WhatsAppMarketing />} />
+            <Route path='/services' element={<Services/>}/> 
           </Route>
+          </Route>
+          
           <Route element={<PublicRoute/>}>
             <Route path={'/privacy-policy'} element={<PrivacyPolicy/>}/>        
             <Route path={'/terms-of-services'} element={<Terms/>}/>
