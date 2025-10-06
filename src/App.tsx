@@ -21,8 +21,8 @@ import EditBooking from "@/pages/edit-booking";
 import ContainerBooking from "@/pages/container";
 import ContainerList from "@/pages/containerList";
 import EditContainer from "@/pages/edit-container";
+import UpdateContainer from "@/pages/update-container";
 
-const UpdateContainer = () => <div>UpdateContainer Page</div>;
 const ContainerBulkStatus = () => <div>ContainerBulkStatus Page</div>;
 const AdminPannel = () => <div>AdminPannel Page</div>;
 const AdminPannelAction = () => <div>AdminPannelAction Page</div>;
