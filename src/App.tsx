@@ -13,12 +13,13 @@ import PrivacyPolicy from "@/pages/privacy-policy";
 import Terms from "@/pages/terms";
 import Login from "@/pages/login";
 import Services from "@/pages/services";
-import Layout from "./components/Layout";
-// import Layout from './components/Layout'; // Assuming Layout is still needed
+import Layout from "@/components/Layout";
+import AddBooking from "@/pages/add-booking";
+import { ToastContainer } from "react-toastify";
+
 
 // Placeholder Components (Replace these with your actual imported components)
 // In a real TS project, you would import these from './pages/...'
-const AddBooking = () => <div>AddBooking Page</div>; 
 const EditBooking = () => <div>EditBooking Page</div>; 
 const ContainerBooking = () => <div>ContainerBooking Page</div>;
 const BookingList = () => <div>BookingList Page</div>; 
@@ -78,6 +79,7 @@ return  <QueryClientProvider client={queryClient}>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+          <ToastContainer position='top-center' autoClose={2000} />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
