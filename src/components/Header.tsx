@@ -175,8 +175,9 @@ const Header = () => {
         return (
           <>
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">Home</Link>
-            <Link to="/user-login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">User Login</Link>
-            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">Admin Login</Link>
+            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">
+              Login
+            </Link>
             <Link to="/terms-of-services" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">Terms of Services</Link>
           </>
         );
@@ -186,8 +187,10 @@ const Header = () => {
         return (
           <>
             <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">Home</Link>
-            <Link to="/user-login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">User Login</Link>
-            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">Admin Login</Link>
+            
+            <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">
+            Login
+            </Link>
             <Link to="/privacy-policy" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 text-sm font-medium text-foreground hover:text-brand-blue hover:bg-secondary rounded-md">Privacy Policy</Link>
           </>
         );
