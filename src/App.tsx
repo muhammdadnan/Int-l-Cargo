@@ -16,13 +16,13 @@ import Services from "@/pages/services";
 import Layout from "@/components/Layout";
 import AddBooking from "@/pages/add-booking";
 import { ToastContainer } from "react-toastify";
+import BookingList from "@/pages/bookingList";
 
 
 // Placeholder Components (Replace these with your actual imported components)
 // In a real TS project, you would import these from './pages/...'
 const EditBooking = () => <div>EditBooking Page</div>; 
 const ContainerBooking = () => <div>ContainerBooking Page</div>;
-const BookingList = () => <div>BookingList Page</div>; 
 const ContainerList = () => <div>ContainerList Page</div>; 
 const ContainerBulkStatus = () => <div>ContainerBulkStatus Page</div>;
 const AdminPannel = () => <div>AdminPannel Page</div>;
