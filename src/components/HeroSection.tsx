@@ -12,7 +12,7 @@ const HeroSection = () => {
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
    
-                    if (name === "BiltyNo") {
+                    if (name === "invoiceNo") {
             // Sirf digits allow karo aur max 12 tak
             const onlyNumbers = value.replace(/\D/g, ""); // non-digits remove
             if (onlyNumbers.length <= 12) {
@@ -60,6 +60,7 @@ const HeroSection = () => {
                   value={trackingNumber}
                   onChange={handleChange}
                   className="flex-1"
+                  name="invoiceNo"
                 />
                 <Button
                   onClick={handleTrack}
