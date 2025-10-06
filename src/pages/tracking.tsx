@@ -3,9 +3,11 @@ import Logo from "@/assets/logo.jpg";
 import { Divider, Field } from "@/components/TrackingData/TrackCompo";
 import { TrackingDetails } from "@/components/TrackingData/TrackingDetails";
 import { TrackingHistory } from "@/components/TrackingData/TrackingHistory";
-
+import {useNavigate} from 'react-router-dom'
 export default function Tracking() {
+  const navigate = useNavigate() 
   // Dummy data — replace with your real API response
+  
   const invoice = {
     number: "S0169743",
     date: "08/08/2025",
@@ -62,12 +64,12 @@ export default function Tracking() {
        <TrackingHistory/>
         {/* Back button */}
         <div className="mt-8 flex justify-center">
-          <a
-            href="#"
+          <button
+            onClick={() => navigate('/')}
             className="rounded-md bg-blue-700 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Back to Pak Chinar Int'I Cargo Home
-          </a>
+          </button>
         </div>
 
         <div className="h-10" />
