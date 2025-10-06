@@ -16,7 +16,7 @@ const HeroSection = () => {
             // Sirf digits allow karo aur max 12 tak
             const onlyNumbers = value.replace(/\D/g, ""); // non-digits remove
             if (onlyNumbers.length <= 12) {
-              setTrackingNumber(value)
+              setTrackingNumber(onlyNumbers)
             }
             return;
           }
