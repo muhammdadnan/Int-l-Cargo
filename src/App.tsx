@@ -1,0 +1,82 @@
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import { useAuth } from "./context/AuthContext";
+
+import ProtectedRoute from '@/components/ProtectedRoute';
+import PublicRoute from '@/components/PublicRoute';
+import PrivacyPolicy from "@/pages/privacy-policy";
+import Terms from "@/pages/terms";
+import Login from "@/pages/login";
+// import Layout from './components/Layout'; // Assuming Layout is still needed
+
+// Placeholder Components (Replace these with your actual imported components)
+// In a real TS project, you would import these from './pages/...'
+const AddBooking = () => <div>AddBooking Page</div>; 
+const EditBooking = () => <div>EditBooking Page</div>; 
+const ContainerBooking = () => <div>ContainerBooking Page</div>;
+const BookingList = () => <div>BookingList Page</div>; 
+const ContainerList = () => <div>ContainerList Page</div>; 
+const ContainerBulkStatus = () => <div>ContainerBulkStatus Page</div>;
+const AdminPannel = () => <div>AdminPannel Page</div>;
+const AdminPannelAction = () => <div>AdminPannelAction Page</div>;
+const UpdateContainer = () => <div>UpdateContainer Page</div>;
+const EditContainer = () => <div>EditContainer Page</div>;
+const WhatsAppMarketing = () => <div>WhatsAppMarketing Page</div>;
+const UserLogin = () => <div>UserLogin Page</div>;
+const Services = () => <div>Services Page</div>;
+
+
+const queryClient = new QueryClient();
+
+function App()  {
+ const { loading } = useAuth()
+   if (loading) {
+     // console.log(loading);
+     
+     return (
+       <div className="flex items-center justify-center h-screen bg-gray-50 text-purple-600 text-xl">
+         Loading...
+       </div>
+     );
+   } 
+return  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        
+        <Routes>
+          {/* 1. HOME/INDEX ROUTE (Public, No Redirect) */}
+          <Route path="/" element={<Index />} />
+          <Route element={<ProtectedRoute/>}>
+            <Route path='/add-booking' element={<AddBooking/>}/> 
+            <Route path='/edit-booking/edit/:id' element={<EditBooking/>}/> 
+            <Route path='/container' element={<ContainerBooking/>}/> 
+            <Route path='/all-bookings' element={<BookingList/>}/> 
+            <Route path='/all-containers' element={<ContainerList/>}/> 
+            <Route path='/all-container-bulk-status' element={<ContainerBulkStatus/>}/> 
+            <Route path={'/admin-pannel'} element={<AdminPannel/>}/>        
+            <Route path={'/admin-pannel-action'} element={<AdminPannelAction/>}/>        
+            <Route path="/update-container/edit/:id" element={<UpdateContainer />} />
+            <Route path="/edit-container/edit/:id" element={<EditContainer />} />
+            <Route path="/whatsapp-marketing" element={<WhatsAppMarketing />} />
+          </Route>
+          <Route element={<PublicRoute/>}>
+            <Route path={'/privacy-policy'} element={<PrivacyPolicy/>}/>        
+            <Route path={'/terms-of-services'} element={<Terms/>}/>
+            <Route path={'/login'} element={<Login/>}/>
+          </Route>
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+};
+
+export default App;
