@@ -1,7 +1,6 @@
 import React from 'react'
-import AddContainerNumber from '../components/AddContainerNumber'
-import AddContainer from '../components/AddContainer';
-import UpdateContainerForm from '../components/updateContainerForm';
+import AddContainerNumber from './AddContainerNumber'
+import UpdateContainerForm from './updateContainerForm';
 
 const EditContainer = ({ editData,remainingInvoices,citiesList }) => {
     console.log("remainingInvoices",remainingInvoices);

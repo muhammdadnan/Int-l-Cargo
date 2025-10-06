@@ -20,7 +20,7 @@ import BookingList from "@/pages/bookingList";
 import EditBooking from "@/pages/edit-booking";
 import ContainerBooking from "@/pages/container";
 import ContainerList from "@/pages/containerList";
-import EditContainer from "@/pages/EditContainer";
+import EditContainer from "@/pages/edit-container";
 
 const UpdateContainer = () => <div>UpdateContainer Page</div>;
 const ContainerBulkStatus = () => <div>ContainerBulkStatus Page</div>;
