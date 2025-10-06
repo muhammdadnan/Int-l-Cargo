@@ -24,8 +24,8 @@ import EditContainer from "@/pages/edit-container";
 import UpdateContainer from "@/pages/update-container";
 import ContainerBulkStatus from "@/pages/container-bulk-status";
 import AdminPannel from "@/pages/admin-pannel";
+import AdminPannelAction from "@/pages/AdminPannelAction";
 
-const AdminPannelAction = () => <div>AdminPannelAction Page</div>;
 const WhatsAppMarketing = () => <div>WhatsAppMarketing Page</div>;
 
 
