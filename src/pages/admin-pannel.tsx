@@ -82,7 +82,7 @@ const AdminPannel = () => {
             setIsBranchAdd(false);
             setIsCityAdd(false);
           }}
-          className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 cursor-pointer"
+          className="mt-20 bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 cursor-pointer"
         >
           ← Back
         </button>
