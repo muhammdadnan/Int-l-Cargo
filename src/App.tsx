@@ -19,9 +19,8 @@ import { ToastContainer } from "react-toastify";
 import BookingList from "@/pages/bookingList";
 import EditBooking from "@/pages/edit-booking";
 import ContainerBooking from "@/pages/container";
+import ContainerList from "@/pages/containerList";
 
-
-const ContainerList = () => <div>ContainerList Page</div>; 
 const ContainerBulkStatus = () => <div>ContainerBulkStatus Page</div>;
 const AdminPannel = () => <div>AdminPannel Page</div>;
 const AdminPannelAction = () => <div>AdminPannelAction Page</div>;
