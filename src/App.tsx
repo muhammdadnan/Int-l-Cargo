@@ -23,8 +23,8 @@ import ContainerList from "@/pages/containerList";
 import EditContainer from "@/pages/edit-container";
 import UpdateContainer from "@/pages/update-container";
 import ContainerBulkStatus from "@/pages/container-bulk-status";
+import AdminPannel from "@/pages/admin-pannel";
 
-const AdminPannel = () => <div>AdminPannel Page</div>;
 const AdminPannelAction = () => <div>AdminPannelAction Page</div>;
 const WhatsAppMarketing = () => <div>WhatsAppMarketing Page</div>;
 
