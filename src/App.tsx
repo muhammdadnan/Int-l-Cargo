@@ -20,12 +20,12 @@ import BookingList from "@/pages/bookingList";
 import EditBooking from "@/pages/edit-booking";
 import ContainerBooking from "@/pages/container";
 import ContainerList from "@/pages/containerList";
-import UpdateContainer from "@/pages/update-container";
+import EditContainer from "@/pages/update-container";
 
+const UpdateContainer = () => <div>UpdateContainer Page</div>;
 const ContainerBulkStatus = () => <div>ContainerBulkStatus Page</div>;
 const AdminPannel = () => <div>AdminPannel Page</div>;
 const AdminPannelAction = () => <div>AdminPannelAction Page</div>;
-const EditContainer = () => <div>EditContainer Page</div>;
 const WhatsAppMarketing = () => <div>WhatsAppMarketing Page</div>;
 
 
