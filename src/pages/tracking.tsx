@@ -3,11 +3,93 @@ import Logo from "@/assets/logo.jpg";
 import { Divider, Field } from "@/components/TrackingData/TrackCompo";
 import { TrackingDetails } from "@/components/TrackingData/TrackingDetails";
 import { TrackingHistory } from "@/components/TrackingData/TrackingHistory";
-import {useNavigate} from 'react-router-dom'
+import { AppRoutes } from "@/constants/AppRoutes";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import {useNavigate,useSearchParams} from 'react-router-dom'
+
+const BackToHomeButton = ({ navigate }: { navigate: (path: string) => void }) => (
+    <div className="mt-8 flex justify-center">
+        <button
+            onClick={() => navigate('/')}
+            className="rounded-md bg-blue-700 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+            Back to Pak Chinar Int'I Cargo Home
+        </button>
+    </div>
+);
+
+const Loader = () => (
+    <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+            {/* Tailwind CSS spinner */}
+            <svg className="animate-spin h-10 w-10 text-blue-700 mx-auto" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <p className="mt-4 text-gray-600">Loading tracking data...</p>
+        </div>
+    </div>
+);
+
+const ErrorDisplay = ({ errorMessage, navigate }: { errorMessage: string | null, navigate: (path: string) => void }) => (
+    <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center max-w-md w-full">
+            <h2 className="text-2xl font-bold text-red-600">Tracking Failed </h2>
+            <p className="mt-4 text-gray-700">{errorMessage || "An unknown error occurred while fetching the tracking details."}</p>
+            <BackToHomeButton navigate={navigate} />
+        </div>
+    </div>
+);
+
 export default function Tracking() {
   const navigate = useNavigate() 
   // Dummy data — replace with your real API response
-  
+  const [searchParam] = useSearchParams()
+  const invoiceNumber = searchParam.get('invoice')
+  // console.log(invoiceNumber);
+  const [loading,setLoading] = useState(true)
+  const [error,setError] = useState<string | null>(null);
+  const [trackingData, setTrackingData] = useState(null);
+  const [shipmentContainerDetails, setShipmentContainerDetails] = useState([]);
+  const handleSearch = async() => {
+    try {
+      setLoading(true)
+      const response = await axios.get(`${AppRoutes.tracking}/${invoiceNumber}`)
+      const data = response.data
+      console.log(data);
+      
+      setTrackingData(data?.data?.foundTrackingId)
+      setShipmentContainerDetails(data?.data?.shipmentParts)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+            // Check if it's a network/connection error (no response)
+            if (!error.response) {
+                setError("Network Error: Please check your internet connection."); // 💡 Internet error message
+                return;
+            }
+            
+            // Handle specific server-side errors (validation errors)
+            const errResponse = error.response.data;
+            if (errResponse?.errors?.trackingId) {
+                setError(errResponse.errors.trackingId);
+            } else if (errResponse?.errors?.general) {
+                setError(errResponse.errors.general);
+            } else {
+                setError(`Server Error (${error.response.status}): Could not fetch tracking details.`);
+            }
+        } else {
+            // Handle unexpected errors
+            setError('An unexpected error occurred.');
+        }
+    }
+    finally{
+      setLoading(false)
+    }
+  }
+  useEffect(() => {
+    handleSearch()
+  },[invoiceNumber])
   const invoice = {
     number: "S0169743",
     date: "08/08/2025",
@@ -22,7 +104,12 @@ export default function Tracking() {
     currentStatusDate: "04 Sep 2025",
     currentStatus: "SHIPMENT CLEARED at NEW DELHI–INDIA",
   };
-
+  if (loading) {
+  return <Loader/> 
+  } 
+  if (error) {
+  return <ErrorDisplay navigate={navigate} errorMessage={error}/> 
+  } 
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
@@ -53,24 +140,41 @@ export default function Tracking() {
         </p>
 
         {/* Tracking Details  */}
-          <TrackingDetails invoice={invoice}/>
+        <h1 className="mt-3 text-center text-xl font-semibold">
+                          Tracking Details for{" "}
+                          <span className="text-blue-700">{invoiceNumber}</span>
+                        </h1>
+                
+                        <Divider className="mx-auto mt-2 max-w-xs" />
+        {
+          shipmentContainerDetails.length > 0 &&
+          shipmentContainerDetails.map((detail,index)=>{
+            const containerStatus = detail?.container?.Status || detail?.status || "Status not available";
+            const containerNumber = detail?.container?.ContainerNumber; 
+            const updatedContainerStatusDate = detail?.container?.updatedAt; 
+
+            return <TrackingDetails
+            trackingData={trackingData}
+            key={index} 
+            status={containerStatus}
+            BookingDate={trackingData.BookingDate}
+            InvoiceId={`${detail?.invoiceId}/${detail?.pieces}`}
+            ContainerNumber={containerNumber}
+            currentDate = {updatedContainerStatusDate}
+            pieces = {detail?.pieces}
+            />
+          })
+        }
         {/* History */}
         <h2 className="mt-10 text-center text-lg font-semibold">
           Tracking History for{" "}
-          <span className="text-blue-700">{invoice.number}</span>
+          <span className="text-blue-700">{invoiceNumber}</span>
         </h2>
         <Divider className="mx-auto mt-2 max-w-xs" />
 
        <TrackingHistory/>
         {/* Back button */}
-        <div className="mt-8 flex justify-center">
-          <button
-            onClick={() => navigate('/')}
-            className="rounded-md bg-blue-700 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Back to Pak Chinar Int'I Cargo Home
-          </button>
-        </div>
+        <BackToHomeButton navigate={navigate}/>
 
         <div className="h-10" />
       </main>

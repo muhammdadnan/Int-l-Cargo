@@ -13,7 +13,7 @@ export function Td({ children, className = "" }) {
   return <td className={`px-4 py-3 text-sm ${className}`}>{children}</td>;
 }
 
-export function Field({ label, value, link }) {
+export function Field({ label, value, link = "" }) {
   return (
     <div className="grid grid-cols-[160px,1fr] items-center text-sm sm:text-[13px]">
       <span className="text-gray-500">{label ? `${label}:` : ""}</span>
