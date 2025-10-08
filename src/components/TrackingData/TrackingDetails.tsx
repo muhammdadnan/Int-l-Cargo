@@ -2,17 +2,17 @@ import React from 'react'
 import { Divider, Field } from './TrackCompo'
 import { format } from 'date-fns'; 
 export const TrackingDetails = (
-  {status,BookingDate,currentDate,InvoiceId,ContainerNumber,pieces,trackingData}:
-  {status:string,BookingDate:string,currentDate:string
-    InvoiceId:string,ContainerNumber:string,pieces:number
-    trackingData:any}) => {
-      const dateObject = new Date(currentDate);
-      const formattedDate = format(dateObject, 'dd MMM yyyy');
+  {BookingDate,trackingDetails,trackingData}:
+  {BookingDate:string,
+    trackingDetails:any,trackingData:any}) => {
+      const dateObject = new Date(trackingDetails.currentStatusDate);
+      // const formattedDate = format(dateObject, 'dd MMM yyyy');
+      const formattedDate = trackingDetails.currentStatusDate;
   return (
                 <section className="mt-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <Field label="Invoice Number" value={InvoiceId} />
-                    <Field label="Container" value={ContainerNumber} />
+                    <Field label="Invoice Number" value={trackingDetails.invoiceId} />
+                    <Field label="Container" value={trackingDetails.containerNumber?trackingDetails.containerNumber:"-"} />
                     <Field label="Booking Date" value={BookingDate} />
                     <Field label="" value="" />
                   </div>
@@ -35,7 +35,7 @@ export const TrackingDetails = (
                       link
                     /> */}
                     {/* <Field label="Total Weight" value={"48"} /> */}
-                    <Field label="Pieces" value={String(pieces)} />
+                    <Field label="Pieces" value={trackingDetails.pieces} />
                   </div>
         
                   {/* Current status */}
@@ -45,7 +45,7 @@ export const TrackingDetails = (
                       {formattedDate} -{" "}
                     </span>
                     <a className="text-blue-700 hover:underline" href="#">
-                      {status}
+                      {trackingDetails.currentStatus}
                     </a>
                   </div>
                 </section>
