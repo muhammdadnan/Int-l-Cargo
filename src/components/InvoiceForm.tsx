@@ -379,7 +379,9 @@ setErrors({});
             <div className="grid grid-cols-5 gap-4">
                 <div>
                 <label className="font-medium">Bilty No</label>
-                <input type="text" className="w-full border rounded px-2 py-1" value={formData.BiltyNo} onChange={handleChange} name='BiltyNo' readOnly={isEditClicked} />
+                <input type="text" className="w-full border rounded px-2 py-1"
+                 value={formData.BiltyNo} onChange={handleChange} name='BiltyNo'
+                  readOnly={isSubmitted && !isEditClicked} />
                 </div>
                 <div>
                 <label className="font-medium">Invoice No</label>
