@@ -51,7 +51,9 @@ export default function Tracking() {
   const [loading,setLoading] = useState(true)
   const [error,setError] = useState<string | null>(null);
   const [trackingData, setTrackingData] = useState(null);
-  const [shipmentContainerDetails, setShipmentContainerDetails] = useState([]);
+  // const [shipmentContainerDetails, setShipmentContainerDetails] = useState([]);
+  const [trackingDetails, setTrackingDetails] = useState([]);
+  const [trackingHistory, setTrackingHistory] = useState([]);
   const handleSearch = async() => {
     try {
       setLoading(true)
@@ -60,7 +62,9 @@ export default function Tracking() {
       console.log(data);
       
       setTrackingData(data?.data?.foundTrackingId)
-      setShipmentContainerDetails(data?.data?.shipmentParts)
+      // setShipmentContainerDetails(data?.data?.shipmentParts)
+      setTrackingDetails(data?.data?.foundTrackingId?.tracking_details)
+      setTrackingHistory(data?.data?.foundTrackingId?.tracking_history)
     } catch (error) {
       if (axios.isAxiosError(error)) {
             // Check if it's a network/connection error (no response)
@@ -110,6 +114,7 @@ export default function Tracking() {
   if (error) {
   return <ErrorDisplay navigate={navigate} errorMessage={error}/> 
   } 
+// console.log(trackingDetails);
 
   return (
     <div className="min-h-screen bg-white text-gray-800">
@@ -147,21 +152,15 @@ export default function Tracking() {
                 
                         <Divider className="mx-auto mt-2 max-w-xs" />
         {
-          shipmentContainerDetails.length > 0 &&
-          shipmentContainerDetails.map((detail,index)=>{
-            const containerStatus = detail?.container?.Status || detail?.status || "Status not available";
-            const containerNumber = detail?.container?.ContainerNumber; 
-            const updatedContainerStatusDate = detail?.container?.updatedAt; 
-
+          trackingDetails.length > 0 &&
+          trackingDetails.map((detail,index)=>{
+            
             return <TrackingDetails
             trackingData={trackingData}
+            trackingDetails={detail}
             key={index} 
-            status={containerStatus}
             BookingDate={trackingData.BookingDate}
-            InvoiceId={`${detail?.invoiceId}/${detail?.pieces}`}
-            ContainerNumber={containerNumber}
-            currentDate = {updatedContainerStatusDate}
-            pieces = {detail?.pieces}
+            
             />
           })
         }
@@ -171,8 +170,9 @@ export default function Tracking() {
           <span className="text-blue-700">{invoiceNumber}</span>
         </h2>
         <Divider className="mx-auto mt-2 max-w-xs" />
-
-       <TrackingHistory/>
+        <TrackingHistory trackingHistory = {trackingHistory}/>
+    
+       {/* <TrackingHistory/> */}
         {/* Back button */}
         <BackToHomeButton navigate={navigate}/>
 
