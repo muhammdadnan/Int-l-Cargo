@@ -3,31 +3,49 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-
+import {useNavigate} from 'react-router-dom'
+import { toast } from "react-toastify";
 interface TrackingModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const TrackingModal = ({ open, onOpenChange }: TrackingModalProps) => {
+  const navigate = useNavigate();
   const [invoiceNumber, setInvoiceNumber] = useState("");
-  const { toast } = useToast();
-
+  // const { toast } = useToast();
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+   
+                    if (name === "invoiceNo") {
+            // Sirf digits allow karo aur max 12 tak
+            const onlyNumbers = value.replace(/\D/g, ""); // non-digits remove
+            if (onlyNumbers.length <= 12) {
+              setInvoiceNumber(onlyNumbers)
+            }
+            return;
+          }
+  }
   const handleTrackPackage = () => {
-    if (invoiceNumber.trim()) {
-      toast({
-        title: "Tracking Package",
-        description: `Searching for package with invoice: ${invoiceNumber}`,
-      });
-      setInvoiceNumber("");
-      onOpenChange(false);
-    } else {
-      toast({
-        title: "Error",
-        description: "Please enter a valid invoice number",
-        variant: "destructive",
-      });
-    }
+    if (invoiceNumber.length !== 12) {
+          toast.error("Tracking No must be exactly 12 digits");
+          return;
+        }
+        navigate(`/track/?invoice=${invoiceNumber}`)
+    // if (invoiceNumber.trim()) {
+    //   toast({
+    //     title: "Tracking Package",
+    //     description: `Searching for package with invoice: ${invoiceNumber}`,
+    //   });
+    //   setInvoiceNumber("");
+    //   onOpenChange(false);
+    // } else {
+    //   toast({
+    //     title: "Error",
+    //     description: "Please enter a valid invoice number",
+    //     variant: "destructive",
+    //   });
+    // }
   };
 
   return (
@@ -40,10 +58,11 @@ const TrackingModal = ({ open, onOpenChange }: TrackingModalProps) => {
         </DialogHeader>
         <div className="space-y-4 py-4">
           <Input
+            name="invoiceNo"
             type="text"
             placeholder="Enter your invoice number"
             value={invoiceNumber}
-            onChange={(e) => setInvoiceNumber(e.target.value)}
+            onChange={handleChange}
             className="w-full"
             onKeyPress={(e) => e.key === 'Enter' && handleTrackPackage()}
           />
