@@ -1,13 +1,15 @@
 import React from 'react'
 import { Divider, Field } from './TrackCompo'
-import { format } from 'date-fns'; 
+import moment from 'moment'
 export const TrackingDetails = (
   {BookingDate,trackingDetails,trackingData}:
   {BookingDate:string,
     trackingDetails:any,trackingData:any}) => {
-      const dateObject = new Date(trackingDetails.currentStatusDate);
-      // const formattedDate = format(dateObject, 'dd MMM yyyy');
-      const formattedDate = trackingDetails.currentStatusDate;
+      
+      const isoDateString = trackingDetails.currentStatusDate;
+
+      const formattedDate = moment(isoDateString).format('DD MMM YYYY');
+
   return (
                 <section className="mt-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

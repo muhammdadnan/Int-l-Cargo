@@ -124,36 +124,36 @@ const [statusMap, setStatusMap] = useState({}); // key: containerId, value: sele
            <td className="px-6 py-4 text-center">
   <div className="flex justify-center">
     <select
-      className="border p-2 text-center"
-      value={statusMap[container._id] || container.Status || ''}
-      onChange={(e) => {
-        const value = e.target.value;
-        setStatusMap((prev) => ({ ...prev, [container._id]: value }));
-      }}
-    >
-      <option value="">Select Status</option>
-      {steps.map((step, index) => {
-        const currentIndex = steps.indexOf(container.Status);
-        const isDisabled = index < currentIndex;
+ className="border p-2 text-center"
+ value={statusMap[container._id] || container.Status || ''}
+ onChange={(e) => {
+  const value = e.target.value;
+  setStatusMap((prev) => ({ ...prev, [container._id]: value }));
+ }}
+  >
+ <option value="">Select Status</option>
+ {steps.map((step, index) => {
+  const currentIndex = steps.indexOf(container.Status);
+  // 🛑 FIX: Yahan 'index < currentIndex' ki jagah 'index <= currentIndex' use hoga
+  const isDisabled = index <= currentIndex; 
 
-        return (
-          <option
-            className={`${isDisabled ? 'cursor-not-allowed':'cursor-pointer'} `}
-  key={index}
-  value={step}
-  disabled={isDisabled}
-  style={{
-    color: isDisabled ? '#9ca3af' : '#111827', // Tailwind gray-400 and gray-900
-    backgroundColor: isDisabled ? '#f3f4f0' : 'white', // gray-100
-    fontStyle: isDisabled ? 'italic' : 'normal',
-    cursor: isDisabled ? 'not-allowed' : 'pointer', // does not apply in most browsers but added for clarity
-  }}
-  title={isDisabled ? 'Already passed. Cannot go back.' : ''}
+  return (
+   <option
+  className={`${isDisabled ? 'cursor-not-allowed':'cursor-pointer'} `}
+ key={index}
+ value={step}
+ disabled={isDisabled} // <-- Yahi disabled={true} ho jayega current status ke liye
+ style={{
+  color: isDisabled ? '#9ca3af' : '#111827',
+  backgroundColor: isDisabled ? '#f3f4f0' : 'white',
+  fontStyle: isDisabled ? 'italic' : 'normal',
+  cursor: isDisabled ? 'not-allowed' : 'pointer',
+ }}
+ title={isDisabled ? 'Already passed or current status. Cannot select again.' : ''}
 >
-  {isDisabled ? `⛔ ${step}` : step}
-  
+ {isDisabled ? `⛔ ${step}` : step}
+ 
 </option>
-
         );
       })}
     </select>
