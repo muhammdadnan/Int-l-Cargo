@@ -9,8 +9,8 @@ export const TrackingHistory = ({trackingHistory}:{trackingHistory:any[]}) => {
               <tr>
                 <Th>Sl. No.</Th>
                 <Th>Date</Th>
-                {/* <Th>Container</Th> */}
                 <Th>Invoice</Th>
+                <Th>Pieces</Th>
                 <Th>Status</Th>
               </tr>
             </thead>
@@ -21,8 +21,8 @@ export const TrackingHistory = ({trackingHistory}:{trackingHistory:any[]}) => {
                 return <tr key={index+1} className="hover:bg-gray-50/70">
                   <Td className="w-20">{index+1}</Td>
                   <Td className="whitespace-nowrap w-40">{formattedDate}</Td>
-                  {/* <Td className="w-56">{history.containerNumber}</Td> */}
                   <Td className="w-20">{`${history.invoiceId}`}</Td>
+                  <Td className="w-20">{history.pieces}</Td>
                   <Td className="whitespace-nowrap w-40">{history.oldStatus}</Td>
                   {/* <Td className="text-gray-600">{row.remarks}</Td> */}
                 </tr>
