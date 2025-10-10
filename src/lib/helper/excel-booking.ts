@@ -93,22 +93,47 @@ export const exportToExcel = (bookings, fileName = "Bookings.xlsx") => {
   const data = cleanedData.map((row) => keys.map((k) => row[k]));
 
   // ✅ final worksheet data (headers + rows)
-  const worksheetData = [headers, ...data];
+  // const worksheetData = [headers, ...data];
 
-  // ✅ apply styles (center align + bold headers)
-  const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+  // // ✅ apply styles (center align + bold headers)
+  // const ws = XLSX.utils.aoa_to_sheet(worksheetData);
 
   // loop for styles
-  worksheetData.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      const cellRef = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
+  // worksheetData.forEach((row, rowIndex) => {
+  //   row.forEach((cell, colIndex) => {
+  //     const cellRef = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
 
-      ws[cellRef].s = {
-        alignment: { horizontal: "center", vertical: "center", wrapText: true },
-        font: rowIndex === 0 ? { bold: true } : {}, // header bold
-      };
-    });
+  //     ws[cellRef].s = {
+  //       alignment: { horizontal: "center", vertical: "center", wrapText: true },
+  //       font: rowIndex === 0 ? { bold: true } : {}, // header bold
+  //     };
+  //   });
+  // });
+  
+// ✅ final worksheet data (headers + rows)
+const worksheetData = [
+  headers,
+  ...data.map((row) => row.map((cell) => (cell ?? ""))),
+];
+
+// ✅ apply styles (center align + bold headers)
+const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+
+// loop for styles
+worksheetData.forEach((row, rowIndex) => {
+  row.forEach((cell, colIndex) => {
+    const cellRef = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
+
+    if (!ws[cellRef]) {
+      ws[cellRef] = { t: "s", v: "" }; // avoid undefined cell error
+    }
+
+    ws[cellRef].s = {
+      alignment: { horizontal: "center", vertical: "center", wrapText: true },
+      font: rowIndex === 0 ? { bold: true } : {},
+    };
   });
+});
 
   // ✅ auto column width
   ws["!cols"] = headers.map((h, i) => ({
