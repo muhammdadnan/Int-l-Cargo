@@ -8,7 +8,7 @@ import CsvModal from '@/components/CsvModal';
 
 const BookingList = () => {
   const [bookings, setBookings] = useState([]);
-  const [bookingLoading, setbookingLoading] = useState(false);
+  const [bookingLoading, setbookingLoading] = useState(true);
   const [deleteLoadingId, setDeleteLoadingId] = useState(null);
     
   const [searchQuery, setSearchQuery] = useState(""); // ✅ NEW
