@@ -59,7 +59,7 @@ const CreateUser = () => {
     };
     
   return (
-    <div className="mt-20 flex justify-center items-center min-h-96">
+    <div className="flex justify-center items-center min-h-96">
           <div className="bg-white/20 backdrop-blur-sm p-8 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
               Create User
