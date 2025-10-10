@@ -12,6 +12,12 @@ const AdminPannel = () => {
   // console.log(actionType && true)
   const navigate = useNavigate() 
 
+   const handleUserActions = () => {
+    setIsBranchAdd(false);
+    setIsCityAdd(false);
+    setIsUserAdd(false);
+    navigate('/admin-pannel-action', { state: { actionType: 'userAction' } });
+  };
    const handleBranchActions = () => {
     setIsBranchAdd(false);
     setIsCityAdd(false);
@@ -88,7 +94,7 @@ const AdminPannel = () => {
         </button>
       </div>
             <CreateUser />
-            
+                
             </>
           }
           {
@@ -120,7 +126,11 @@ const AdminPannel = () => {
           }}
           label={"Add User"}
         />
-        
+        <AdminPanelButton
+  onClick={handleUserActions}
+  label={"User Actions"}
+/>
+          
       </div>
     </>
   ) : isCityAdd ? (
@@ -150,6 +160,10 @@ const AdminPannel = () => {
           }}
           label={"Add User"}
         />
+        <AdminPanelButton
+  onClick={handleUserActions}
+  label={"User Actions"}
+/>
         
       </div>
     </>
@@ -230,6 +244,10 @@ const AdminPannel = () => {
           }}
           label={"Add User"}
         />
+        <AdminPanelButton
+  onClick={handleUserActions}
+  label={"User Actions"}
+/>
         
       </div>
     </>
