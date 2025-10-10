@@ -116,9 +116,16 @@ const AdminPannelAction = () => {
 
     try {
       if (actionType === 'branchAction') {
-        await axios.delete(`${AppRoutes.deleteBranch}/${id}`);
-        toast.success('Branch deleted successfully');
-        fetchBranches();
+        try {
+          await axios.delete(`${AppRoutes.deleteBranch}/${id}`);
+          toast.success('Branch deleted successfully');
+          fetchBranches();
+          
+        } catch (error) {
+          const err = error?.response?.data?.errors;
+          if (err?.general) toast.error(err.general);
+          else toast.error('Something went wrong');
+        }
       } 
       else if (actionType === 'userAction') {
         try {
@@ -139,9 +146,16 @@ const AdminPannelAction = () => {
       } 
       
       else {
-        await axios.delete(`${AppRoutes.deleteCity}/${id}`);
-        toast.success('City deleted successfully');
-        fetchCities();
+        try {
+          await axios.delete(`${AppRoutes.deleteCity}/${id}`);
+          toast.success('City deleted successfully');
+          fetchCities();
+          
+        } catch (error) {
+          const err = error?.response?.data?.errors;
+          if (err?.general) toast.error(err.general);
+          else toast.error('Something went wrong');
+        }
       }
     } catch (error) {
       const err = error?.response?.data?.errors;
