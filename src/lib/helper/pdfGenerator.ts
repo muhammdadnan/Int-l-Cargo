@@ -139,7 +139,8 @@ senderLines.forEach((line) => {
 
 
   // const detailStartY = bodyStartY + Math.max(senderLines.length, receiverLines.length) * 6 + 10;
-const detailStartY = bodyStartY + Math.max(senderLines.length, receiverLines.length) * 5 + 6;
+const detailStartY = bodyStartY + Math.max(senderLines.length, receiverLines.length) * 5 + 15;
+// const detailStartY = bodyStartY +  receiverLines.length * 5 + 20;
 
   doc.setFont("helvetica", "bold");
   doc.text(`Pieces: ${safeText(formData.NoOfPieces)}`, 15, detailStartY);
