@@ -63,4 +63,5 @@ export const AppRoutes = {
     
     //getallusers
     allUsers: BASE_URL + "/api/all-users",
+    deleteUser: BASE_URL + "/api/delete-user",
 }
