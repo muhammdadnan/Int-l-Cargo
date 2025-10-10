@@ -13,6 +13,7 @@ const AdminPannelAction = () => {
   const [editItem, setEditItem] = useState(null);
   const [formValue, setFormValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (actionType === 'branchAction') {
@@ -20,27 +21,59 @@ const AdminPannelAction = () => {
     } else if (actionType === 'cityAction') {
       fetchCities();
     }
+     else if (actionType === 'userAction') {
+      fetchUsers();
+    }
   }, [actionType]);
 
+  const fetchUsers = async () => {
+    try {
+      setLoading(true)
+      const token = sessionStorage.getItem('token');
+      const response = await axios.get(AppRoutes.allUsers, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      console.log(response);
+      setData(response.data?.data?.users || []);
+      
+      
+    } catch (error) {
+      const err = error?.response?.data?.errors;
+      if (err?.general) toast.error(err.general);
+      else toast.error('Something went wrong');
+    }
+    finally{
+
+      setLoading(false)
+    }
+  };
   const fetchBranches = async () => {
     try {
+      setLoading(true)
       const res = await axios.get(AppRoutes.allBranch);
       setData(res.data?.data?.allBranches || []);
     } catch (error) {
       const err = error?.response?.data?.errors;
       if (err?.general) toast.error(err.general);
       else toast.error('Something went wrong');
+    }finally{
+      setLoading(false)
     }
   };
 
   const fetchCities = async () => {
     try {
+      setLoading(true)
       const res = await axios.get(AppRoutes.allCity);
       setData(res.data?.data?.allCities || []);
     } catch (error) {
       const err = error?.response?.data?.errors;
       if (err?.general) toast.error(err.general);
       else toast.error('Something went wrong');
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -77,7 +110,7 @@ const AdminPannelAction = () => {
 
   const handleDeleteContainer = async (id) => {
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete this ${actionType === 'branchAction' ? 'branch' : 'city'}?`
+      `Are you sure you want to delete this ${actionType === 'branchAction' ? 'branch' : actionType === 'userAction' ? 'user' :  'city'}?`
     );
     if (!confirmDelete) return;
 
@@ -86,7 +119,26 @@ const AdminPannelAction = () => {
         await axios.delete(`${AppRoutes.deleteBranch}/${id}`);
         toast.success('Branch deleted successfully');
         fetchBranches();
-      } else {
+      } 
+      else if (actionType === 'userAction') {
+        try {
+          const token = sessionStorage.getItem('token');
+          await axios.delete(`${AppRoutes.deleteUser}/${id}`,{
+            headers: {
+            Authorization: `Bearer ${token}`
+          }
+          });
+          toast.success('User deleted successfully');
+          fetchUsers();
+          
+        } catch (error) {
+          const err = error?.response?.data?.errors;
+          if (err?.general) toast.error(err.general);
+          else toast.error('Something went wrong');
+        }  
+      } 
+      
+      else {
         await axios.delete(`${AppRoutes.deleteCity}/${id}`);
         toast.success('City deleted successfully');
         fetchCities();
@@ -98,11 +150,16 @@ const AdminPannelAction = () => {
     }
   };
 
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen bg-gray-50 text-purple-600 text-xl">
+        Loading...
+          </div>
+  }
   return (
     <div className="bg-gray-50 min-h-screen">
       <Header />
       <h1 className="text-center text-2xl font-bold text-blue-800 px-4 pt-6 pb-2">
-        {actionType === 'branchAction' ? 'All Branches' : 'All Cities'}
+        {actionType === 'branchAction' ? 'All Branches' : actionType === 'userAction' ? 'All Users' : 'All Cities'}
       </h1>
 
       {/* ✅ Back Button */}
@@ -122,7 +179,7 @@ const AdminPannelAction = () => {
               <tr className="border-b border-gray-300">
                 <th className="px-6 py-3 text-center whitespace-nowrap">S.No</th>
                 <th className="px-6 py-3 text-center whitespace-nowrap">
-                  {actionType === 'branchAction' ? 'Branch' : 'City'}
+                  {actionType === 'branchAction' ? 'Branch' : actionType === 'userAction' ? 'Email' : 'City'}
                 </th>
                 <th className="px-6 py-3 text-center whitespace-nowrap">Actions</th>
               </tr>
@@ -133,16 +190,21 @@ const AdminPannelAction = () => {
                   <tr key={index} className="bg-white border-b hover:bg-gray-50">
                     <td className="px-6 py-4 text-center">{index + 1}</td>
                     <td className="px-6 py-4 text-center">
-                      {actionType === 'branchAction' ? d.branch : d.city}
+                      {actionType === 'branchAction' ? d.branch : actionType === 'userAction' ? d.email : d.city}
                     </td>
                     <td className="px-6 flex gap-4 py-4 text-center">
-                      <button
+                      {
+                        actionType !== 'userAction' &&(
+                          <button
                         onClick={() => handleEditContainer(d)}
                         className="cursor-pointer text-green-600 hover:text-blue-800"
                       >
                         Edit
                       </button>
-                      <button
+
+                        )
+                      }
+                                            <button
                         onClick={() => handleDeleteContainer(d._id)}
                         className="cursor-pointer text-red-600 hover:text-blue-800"
                       >
