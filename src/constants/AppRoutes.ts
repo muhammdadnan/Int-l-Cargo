@@ -60,5 +60,7 @@ export const AppRoutes = {
     // get all whatsapp numbers
     allWhatsappNumber: BASE_URL + "/api/all-whatsapp",
     sendMediaTwhatsapp: BASE_URL + "/api/whatsapp",
-
+    
+    //getallusers
+    allUsers: BASE_URL + "/api/all-users",
 }
