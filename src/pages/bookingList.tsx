@@ -13,7 +13,8 @@ const BookingList = () => {
     
   const [searchQuery, setSearchQuery] = useState(""); // ✅ NEW
   const [currentPage,setCurrentPage] = useState(1)
-  const [itemsPerPage,setItemsPerPage] = useState(10)
+  const [itemsPerPage, setItemsPerPage] = useState<number | "All">(10);
+
   
   const [showModal, setShowModal] = useState(false);
   const [branch, setBranch] = useState([]);
@@ -82,16 +83,21 @@ const BookingList = () => {
     booking.InvoiceNo?.toString().includes(searchQuery.trim())
   );
   // ✅ PAGINATION LOGIC
-  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage) //ceil mtlb 1.3 ha to 2 krdy ga yani ky length/10 = 13/10 =1.3=2
-  // console.log("totalPages",totalPages);
-  
+  const totalPages =
+ itemsPerPage === "All"
+    ? 1
+    : Math.ceil(filteredBookings.length / (itemsPerPage as number));
+
   //set the item on curent page through index
-  const startIndex = (currentPage - 1) * itemsPerPage
-  // console.log("startIndex",startIndex);
+  const startIndex =
+  itemsPerPage === "All" ? 0 : (currentPage - 1) * itemsPerPage;
+
   // set items to show on page  according to number
-  const currentBookings = filteredBookings.slice(startIndex,startIndex + itemsPerPage)
-  // console.log("currentBookings",currentBookings);
-  
+  const currentBookings =
+  itemsPerPage === "All"
+    ? filteredBookings
+    : filteredBookings.slice(startIndex, startIndex + itemsPerPage);
+
   // const currentIndex = filteredBookings.
   
   
@@ -139,13 +145,14 @@ const BookingList = () => {
             <select
               value={itemsPerPage}
               onChange={(e) => {
-                setItemsPerPage(Number(e.target.value));
+                const value = e.target.value;
+                setItemsPerPage(value === "All" ? "All" : Number(value));
                 setCurrentPage(1); // reset to first page
 
               }}
               className="border rounded px-2 py-1"
             >
-              {[5, 10, 20, 50].map((num) => (
+              {[5, 10, 20, 50,"All"].map((num) => (
                 <option key={num} value={num}>
                   {num}
                 </option>
@@ -231,31 +238,27 @@ const BookingList = () => {
                   <div className="flex justify-center items-center mt-4 space-x-2 mb-4">
                      <button
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-1 border rounded disabled:opacity-50 ${currentPage === 1 ? '':'cursor-pointer'}`}
+                  disabled={currentPage === 1 || itemsPerPage === "All"}
+                  className={`px-3 py-1 border rounded disabled:opacity-50
+                     ${currentPage === 1 ? '':'cursor-pointer'}`}
                 >
                   Prev
                     </button>
-                    {
-                      Array.from({ length: totalPages }, (_, i) => {
-                        // console.log(i);
-                        // i is index numb of total pages
-                        return <button
-                          key={i}
-                          onClick={() => setCurrentPage(i + 1)}
-                          className={`px-3 py-1 border rounded ${
-                            currentPage === i + 1
-                              ? "bg-blue-500 text-white"
-                              : "bg-white"
-                    } cursor-pointer`}
-                  >
-                    {i + 1}
-                  </button>
-                      })
-                    }
+                    {itemsPerPage !== "All" &&
+    Array.from({ length: totalPages }, (_, i) => (
+      <button
+        key={i}
+        onClick={() => setCurrentPage(i + 1)}
+        className={`px-3 py-1 border rounded ${
+          currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white"
+        } cursor-pointer`}
+      >
+        {i + 1}
+      </button>
+    ))}
                        <button
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === totalPages || itemsPerPage === "All"}
                   className={`px-3 py-1 border rounded disabled:opacity-50 ${currentPage === totalPages ? '':'cursor-pointer'}`}
                 >
                   Next
