@@ -41,6 +41,8 @@ const CreateUser = () => {
     console.log(data);
     
     toast.success(data?.data?.message);
+    setEmail('')
+    setPassword('')
     // navigate('/services')
     
     
