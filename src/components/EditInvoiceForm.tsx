@@ -339,31 +339,40 @@ useEffect(() => {
 
   // Apply discount if present
   const discount = parseFloat(charges.Discount?.total) || 0;
-  subtotal -= discount;
+  // subtotal -= discount;
 
   // Filter enabled charges only
-  const enabledCharges = allCharges.filter(
-    ([, charge]) => charge?.enabled
+  const selectedCharges = allCharges.filter(
+    ([key, value]) => value.enabled && key !== 'Discount'
   );
 
   // Calculate total from enabled charges
-  let selectedTotal = enabledCharges.reduce((sum, [, charge]) => {
+  // let selectedTotal = enabledCharges.reduce((sum, [, charge]) => {
+  //   const total = parseFloat(charge.total) || 0;
+  //   return sum + total;
+  // }, 0);
+         let selectedTotal = selectedCharges.reduce((sum, [_, charge]) => {
     const total = parseFloat(charge.total) || 0;
     return sum + total;
   }, 0);
 
-  if (selectedTotal > 0) selectedTotal -= discount;
+  // if (selectedTotal > 0) selectedTotal -= discount;
 
   // VAT on selected charges (after discount)
-  const vatRate = parseFloat(formData.Vat) || 0;
-  const vatTotal = (selectedTotal * vatRate) / 100;
-
+  // const vatRate = parseFloat(formData.Vat) || 0;
+  // const vatTotal = (selectedTotal * vatRate) / 100;
+const vatPercent = parseFloat(formData.Vat) || 0;
+  const vatTotal = (selectedTotal * vatPercent) / 100;
+  
   // Final invoice total
-  const invoiceTotal = subtotal + vatTotal;
+  // const invoiceTotal = subtotal + vatTotal;
 
-  // Optional: Convert to words
-  const amountInWords = numberToWords(invoiceTotal.toFixed(2));
-
+  // // Optional: Convert to words
+  // const amountInWords = numberToWords(invoiceTotal.toFixed(2));
+  const invoiceTotal = subtotal + vatTotal - discount;
+  
+    const amountInWords = numberToWords(invoiceTotal.toFixed(2));
+  
   setFormData((prev) => ({
     ...prev,
     SubTotal: subtotal.toFixed(2),

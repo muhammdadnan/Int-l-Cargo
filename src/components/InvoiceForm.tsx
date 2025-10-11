@@ -324,33 +324,45 @@ setErrors({});
           }, 0);
           // Apply discount only if enabled
           const discount = parseFloat(formData.Charges.Discount?.total) || 0;
-          console.log(discount);
+          // console.log(discount);
           
-          // if(subtotal > discount) subtotal -= discount;
-          subtotal -= discount;
-          // Subtract discount from subtotal (if enabled)
-          // if (isDiscountEnabled) {
-          // }
+          // subtotal -= discount;
+          // ✅ Calculate total of enabled charges (excluding Discount)
+  const selectedCharges = allCharges.filter(
+    ([key, value]) => value.enabled && key !== 'Discount'
+  );
           
       
-      const selectedCharges = allCharges.filter(([key,value]) => value.enabled);
+      // const selectedCharges = allCharges.filter(([key,value]) => value.enabled);
       // console.log(selectedCharges);
       
-          let selectedTotal = selectedCharges.reduce((sum, [key,charge]) => {
-            const total = parseFloat(charge.total) || 0;
-            return sum + total ;
-          }, 0);
+          // let selectedTotal = selectedCharges.reduce((sum, [key,charge]) => {
+          //   const total = parseFloat(charge.total) || 0;
+          //   return sum + total ;
+          // }, 0);
+           let selectedTotal = selectedCharges.reduce((sum, [_, charge]) => {
+    const total = parseFloat(charge.total) || 0;
+    return sum + total;
+  }, 0);
+
+   // ✅ VAT should apply only on enabled, non-discount charges
+  const vatPercent = parseFloat(formData.Vat) || 0;
+  const vatTotal = (selectedTotal * vatPercent) / 100;
       
-          if(selectedTotal > 0) selectedTotal -=discount
+          // if(selectedTotal > 0) selectedTotal -=discount
           // selectedTotal -=discount
-          const vatPercent = parseFloat(formData.Vat) || 0;
-          const vatTotal = (selectedTotal * vatPercent / 100);
+          // const vatPercent = parseFloat(formData.Vat) || 0;
+          // const vatTotal = (selectedTotal * vatPercent / 100);
         
-        
-          const invoiceTotal = subtotal + vatTotal ;
+        // ✅ Apply discount AFTER VAT calculation
+  const invoiceTotal = subtotal + vatTotal - discount;
+
+  const amountInWords = numberToWords(invoiceTotal.toFixed(2));
+
+          // const invoiceTotal = subtotal + vatTotal ;
        
-        const amountInWords = numberToWords(invoiceTotal.toFixed(2));
-        console.log(amountInWords);
+        // const amountInWords = numberToWords(invoiceTotal.toFixed(2));
+        // console.log(amountInWords);
         
           setFormData(prev => ({
             ...prev,
