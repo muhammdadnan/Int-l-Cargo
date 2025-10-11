@@ -316,7 +316,7 @@ setErrors({});
           
           const allCharges = Object.entries(formData.Charges) as [keyof Charges, ChargeItem][];
           // console.log(allCharges);
-          let subtotal = allCharges.reduce((sum, [key,value]) => {
+          let totalCharges = allCharges.reduce((sum, [key,value]) => {
             
             if (key === 'Discount') return sum; // Skip Discount
             const total = parseFloat(value.total) || 0;
@@ -325,7 +325,8 @@ setErrors({});
           // Apply discount only if enabled
           const discount = parseFloat(formData.Charges.Discount?.total) || 0;
           // console.log(discount);
-          
+            const subtotal = Math.max(0, totalCharges - discount);
+
           // subtotal -= discount;
           // ✅ Calculate total of enabled charges (excluding Discount)
   const selectedCharges = allCharges.filter(
@@ -355,7 +356,7 @@ setErrors({});
           // const vatTotal = (selectedTotal * vatPercent / 100);
         
         // ✅ Apply discount AFTER VAT calculation
-  const invoiceTotal = subtotal + vatTotal - discount;
+  const invoiceTotal = subtotal + vatTotal;
 
   const amountInWords = numberToWords(invoiceTotal.toFixed(2));
 

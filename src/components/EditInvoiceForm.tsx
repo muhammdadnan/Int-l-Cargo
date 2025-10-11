@@ -331,7 +331,7 @@ useEffect(() => {
   const allCharges = Object.entries(charges);
 
   // Subtotal = sum of all charges (excluding Discount)
-  let subtotal = allCharges.reduce((sum, [key, value]) => {
+  let totalCharges = allCharges.reduce((sum, [key, value]) => {
     if (key === "Discount") return sum; // skip
     const total = parseFloat(value.total) || 0;
     return sum + total;
@@ -340,7 +340,7 @@ useEffect(() => {
   // Apply discount if present
   const discount = parseFloat(charges.Discount?.total) || 0;
   // subtotal -= discount;
-
+  const subtotal = Math.max(0, totalCharges - discount);
   // Filter enabled charges only
   const selectedCharges = allCharges.filter(
     ([key, value]) => value.enabled && key !== 'Discount'
@@ -369,7 +369,7 @@ const vatPercent = parseFloat(formData.Vat) || 0;
 
   // // Optional: Convert to words
   // const amountInWords = numberToWords(invoiceTotal.toFixed(2));
-  const invoiceTotal = subtotal + vatTotal - discount;
+  const invoiceTotal = subtotal + vatTotal;
   
     const amountInWords = numberToWords(invoiceTotal.toFixed(2));
   
