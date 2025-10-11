@@ -15,7 +15,7 @@ export const TrackingHistory = ({trackingHistory}:{trackingHistory:any[]}) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {trackingHistory.map((history,index) => {
+              {[...trackingHistory].reverse().map((history,index) => {
                 const isoDateString = history.oldStatusDate;
                 const formattedDate = moment(isoDateString).format('DD MMM YYYY');
                 return <tr key={index+1} className="hover:bg-gray-50/70">
