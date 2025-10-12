@@ -154,7 +154,9 @@ export default function Tracking() {
         {
           trackingDetails.length > 0 &&
           trackingDetails.map((detail,index)=>{
-            
+            if (detail.containerNumber == 'N/A') {
+              return 
+            }
             return <TrackingDetails
             trackingData={trackingData}
             trackingDetails={detail}
