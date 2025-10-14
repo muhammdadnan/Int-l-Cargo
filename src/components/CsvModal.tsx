@@ -60,98 +60,95 @@ const CsvModal = ({ setShowModal, branches, bookings }) => {
     console.log(bookingDate);
     
     return (
-   <div className="mt-20 fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-96 p-6">
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Export CSV Options
-            </h2>
-                {
-                    error && (
-                        <p className="text-sm text-red-600 mt-1 text center mb-2 text-center font-bold">{error}</p>
-                    )
-            }
-            {/* Branch Select */}
-            <div className="mb-4">
-              <label className="block mb-1 font-semibold">Select Branch</label>
-              <select
-                value={branch}
-                onChange={(e) => setBranch(e.target.value)}
-                className="w-full border rounded px-3 py-2"
-              >
-                        <option value="">-- Select Branch --</option>
-                        {
-                            branches.map((branch, index) => (
-                                <option value={branch.branch} key={index}>{branch.branch}</option>
-                                
-                            ))
-                        }
-              </select>
-            </div>
+      <div className="mt-20 fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div className="bg-white rounded-lg shadow-lg w-96 p-6">
+          <h2 className="text-xl font-bold mb-4 text-center">
+            Export to xlsx Options
+          </h2>
+          {error && (
+            <p className="text-sm text-red-600 mt-1 text center mb-2 text-center font-bold">
+              {error}
+            </p>
+          )}
+          {/* Branch Select */}
+          <div className="mb-4">
+            <label className="block mb-1 font-semibold">Select Branch</label>
+            <select
+              value={branch}
+              onChange={(e) => setBranch(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="">-- Select Branch --</option>
+              {branches.map((branch, index) => (
+                <option value={branch.branch} key={index}>
+                  {branch.branch}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            {/* Date Range */}
-            <div className="mb-4">
-              <label className="block mb-1 font-semibold">Start Date</label>
-              {/* <input
+          {/* Date Range */}
+          <div className="mb-4">
+            <label className="block mb-1 font-semibold">Start Date</label>
+            {/* <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 className="w-full border rounded px-3 py-2"
               /> */}
-                 <select
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full border rounded px-3 py-2"
-              >
-                        <option value="">-- Select Start Date --</option>
-                        {
-                            bookingDate.map((bookingDate, index) => (
-                                <option value={bookingDate} key={index}>{bookingDate}</option>
-                                
-                            ))
-                        }
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block mb-1 font-semibold">End Date</label>
-              {/* <input
+            <select
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="">-- Select Start Date --</option>
+              {bookingDate.map((bookingDate, index) => (
+                <option value={bookingDate} key={index}>
+                  {bookingDate}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block mb-1 font-semibold">End Date</label>
+            {/* <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 className="w-full border rounded px-3 py-2"
               /> */}
-                 <select
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full border rounded px-3 py-2"
-              >
-                        <option value="">-- Select End Date --</option>
-                        {
-                            bookingDate.map((bookingDate, index) => (
-                                <option value={bookingDate} key={index}>{bookingDate}</option>
-                                
-                            ))
-                        }
-              </select>
-            </div>
+            <select
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="">-- Select End Date --</option>
+              {bookingDate.map((bookingDate, index) => (
+                <option value={bookingDate} key={index}>
+                  {bookingDate}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            {/* Buttons */}
-            <div className="flex justify-between">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 cursor-pointer" 
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleExport}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
-              >
-                Export
-              </button>
-            </div>
+          {/* Buttons */}
+          <div className="flex justify-between">
+            <button
+              onClick={() => setShowModal(false)}
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleExport}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
+            >
+              Export
+            </button>
           </div>
         </div>
-  )
+      </div>
+    );
 }
 
 export default CsvModal
