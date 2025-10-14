@@ -11,7 +11,7 @@ const BookingList = () => {
   const [bookingLoading, setbookingLoading] = useState(true);
   const [deleteLoadingId, setDeleteLoadingId] = useState(null);
     
-  const [searchQuery, setSearchQuery] = useState(""); // ✅ NEW
+  const [searchQuery, setSearchQuery] = useState(""); // âœ… NEW
   const [currentPage,setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState<number | "All">(10);
 
@@ -65,7 +65,7 @@ const BookingList = () => {
       const response = await axios.delete(AppRoutes.deleteBooking, { data: { BiltyNo: builtNo } });
       const data = response.data;
       toast.success(data?.data?.message);
-      getBookings(); // ✅ Refresh bookings
+      getBookings(); // âœ… Refresh bookings
     } catch (error) {
     console.log(error);
     
@@ -78,7 +78,7 @@ const BookingList = () => {
     }
   };
 
-  // ✅ FILTERED BOOKINGS
+  // âœ… FILTERED BOOKINGS
   // const filteredBookings = bookings.filter(booking =>
   //   booking.InvoiceNo?.toString().includes(searchQuery.trim())
   // );
@@ -96,7 +96,7 @@ const BookingList = () => {
   );
 });
 
-  // ✅ PAGINATION LOGIC
+  // âœ… PAGINATION LOGIC
   const totalPages =
  itemsPerPage === "All"
     ? 1
@@ -127,47 +127,49 @@ const BookingList = () => {
     };
   return (
     <div className="bg-gray-50 min-h-screen">
-      {
-        showModal &&  (<CsvModal setShowModal={setShowModal} branches={branch} bookings={bookings}/>)
-      }
-      <Header />
-      {
-        bookingLoading ? (
-        <div className="flex items-center justify-center h-screen bg-gray-50 text-purple-600 text-xl">
-        Loading...
-          </div>
-        ): (
-          <>
-              <h1 className="text-center text-2xl font-bold text-blue-800 px-4 pt-6 pb-2">
-        All Bookings Details
-      </h1>
-
-      {/* ✅ SEARCH BAR */}
-      <div className="flex justify-center mb-4 relative w-1/2 mx-auto">
-        <input
-          type="text"
-          // placeholder="Search by Invoice No..."
-          placeholder="Search by Invoice No, Bilty No, Name or Phone..."
-
-          value={searchQuery}
-          onChange={(e) =>{ 
-            setSearchQuery(e.target.value);
-            setCurrentPage(1)
-          }}
-          // className="w-1/2 px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          className="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+      {showModal && (
+        <CsvModal
+          setShowModal={setShowModal}
+          branches={branch}
+          bookings={bookings}
         />
-        {searchQuery && (
-    <button
-      onClick={() => setSearchQuery("")}
-      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-    >
-      ✕
-    </button>
-  )}
-      </div>
-      
-              {/* ✅ Per Page Dropdown */}
+      )}
+      <Header />
+      {bookingLoading ? (
+        <div className="flex items-center justify-center h-screen bg-gray-50 text-purple-600 text-xl">
+          Loading...
+        </div>
+      ) : (
+        <>
+          <h1 className="text-center text-2xl font-bold text-blue-800 px-4 pt-6 pb-2">
+            All Bookings Details
+          </h1>
+
+          {/* âœ… SEARCH BAR */}
+          <div className="flex justify-center mb-4 relative w-1/2 mx-auto">
+            <input
+              type="text"
+              // placeholder="Search by Invoice No..."
+              placeholder="Search by Invoice No, Bilty No, Name or Phone..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              // className="w-1/2 px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                âœ•
+              </button>
+            )}
+          </div>
+
+          {/* âœ… Per Page Dropdown */}
           <div className="flex justify-center px-6 mb-2">
             <label className="mr-2 font-semibold">Rows per page:</label>
             <select
@@ -176,11 +178,10 @@ const BookingList = () => {
                 const value = e.target.value;
                 setItemsPerPage(value === "All" ? "All" : Number(value));
                 setCurrentPage(1); // reset to first page
-
               }}
               className="border rounded px-2 py-1"
             >
-              {[5, 10, 20, 50,"All"].map((num) => (
+              {[5, 10, 20, 50, "All"].map((num) => (
                 <option key={num} value={num}>
                   {num}
                 </option>
@@ -188,132 +189,155 @@ const BookingList = () => {
             </select>
           </div>
 
+          <div className="p-4">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+              {currentBookings.length > 0 ? (
+                <table className="w-full text-sm text-left text-gray-700 bg-white">
+                  <thead className="text-xl uppercase bg-gray-200 text-gray-800">
+                    <tr className="border-b border-gray-300 text-center">
+                      <th className="px-6 py-3">S.No</th>
+                      <th className="px-6 py-3">Bilty No</th>
+                      <th className="px-6 py-3">Invoice No</th>
+                      <th className="px-6 py-3">Booking Date</th>
+                      <th className="px-6 py-3">Status</th>
+                      <th className="px-6 py-3">Sender Name</th>
+                      <th className="px-6 py-3">Sender Mobile</th>
+                      <th className="px-6 py-3">Sender City</th>
+                      <th className="px-6 py-3">Receiver Name</th>
+                      <th className="px-6 py-3">Receiver Mobile 1</th>
+                      <th className="px-6 py-3">Receiver Mobile 2</th>
+                      <th className="px-6 py-3">Receiver City</th>
+                      <th className="px-6 py-3">No. of Pieces</th>
+                      <th className="px-6 py-3">Branch</th>
+                      <th className="px-6 py-3">City</th>
+                      <th className="px-6 py-3 text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentBookings.map((row, index) => {
+                      // console.log(row);
 
-      <div className="p-4">
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-          {currentBookings.length > 0 ? (
-            <table className="w-full text-sm text-left text-gray-700 bg-white">
-              <thead className="text-xl uppercase bg-gray-200 text-gray-800">
-                <tr className="border-b border-gray-300 text-center">
-                  <th className="px-6 py-3">S.No</th>
-                  <th className="px-6 py-3">Bilty No</th>
-                  <th className="px-6 py-3">Invoice No</th>
-                  <th className="px-6 py-3">Booking Date</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Sender Name</th>
-                  <th className="px-6 py-3">Sender Mobile</th>
-                  <th className="px-6 py-3">Sender City</th>
-                  <th className="px-6 py-3">Receiver Name</th>
-                  <th className="px-6 py-3">Receiver Mobile 1</th>
-                  <th className="px-6 py-3">Receiver Mobile 2</th>
-                  <th className="px-6 py-3">Receiver City</th>
-                  <th className="px-6 py-3">No. of Pieces</th>
-                  <th className="px-6 py-3">Branch</th>
-                  <th className="px-6 py-3">City</th>
-                  <th className="px-6 py-3 text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                        {currentBookings.map((row, index) => {
-                          // console.log(row);
-                          
-                  return  <tr key={index} className="bg-white border-b hover:bg-gray-50 text-center">
-                    <td className="px-4 py-2">{startIndex + index + 1}</td>
-                    <td className="px-4 py-2">{row.BiltyNo || '-'}</td>
-                    <td className="px-4 py-2">{row.InvoiceNo || '-'}</td>
-                    <td className="px-4 py-2">{row.BookingDate || '-'}</td>
-                    <td className="px-4 py-2">
-  {row.status}
-</td>
+                      return (
+                        <tr
+                          key={index}
+                          className="bg-white border-b hover:bg-gray-50 text-center"
+                        >
+                          <td className="px-4 py-2">
+                            {startIndex + index + 1}
+                          </td>
+                          <td className="px-4 py-2">{row.BiltyNo || "-"}</td>
+                          <td className="px-4 py-2">{row.InvoiceNo || "-"}</td>
+                          <td className="px-4 py-2">
+                            {row.BookingDate || "-"}
+                          </td>
+                          <td className="px-4 py-2">{row.status}</td>
 
-                    <td className="px-4 py-2">{row.SenderName || '-'}</td>
-                    <td className="px-4 py-2">{row.SenderMobile || '-'}</td>
-                    <td className="px-4 py-2">{row.SenderArea || '-'}</td>
-                    <td className="px-4 py-2">{row.ReceiverName || '-'}</td>
-                    <td className="px-4 py-2">{row.ReceiverMobile1 || '-'}</td>
-                    <td className="px-4 py-2">{row.ReceiverMobile2 || '-'}</td>
-                    <td className="px-4 py-2">{row.ReceiverArea || '-'}</td>
-                    <td className="px-4 py-2">{row.NoOfPieces || '-'}</td>
-                    <td className="px-4 py-2">{row.Branch || '-'}</td>
-                    <td className="px-4 py-2">{row.City || '-'}</td>
-                    <td className="px-6 flex gap-4 py-4 text-center">
-                      <button
-                        onClick={() => navigate(`/edit-booking/edit/${row._id}`)}
-                        className="cursor-pointer text-green-600 hover:text-blue-800"
-                      >
-                        Edit Booking
-                      </button>
-                      
-                        <button
-  onClick={() => handleDelete(row._id, row.BiltyNo, row.status)}
-  className="cursor-pointer text-red-600 hover:text-blue-800"
->
-  {deleteLoadingId === row._id ? 'Deleting...' : 'Delete Booking'}
+                          <td className="px-4 py-2">{row.SenderName || "-"}</td>
+                          <td className="px-4 py-2">
+                            {row.SenderMobile || "-"}
+                          </td>
+                          <td className="px-4 py-2">{row.SenderArea || "-"}</td>
+                          <td className="px-4 py-2">
+                            {row.ReceiverName || "-"}
+                          </td>
+                          <td className="px-4 py-2">
+                            {row.ReceiverMobile1 || "-"}
+                          </td>
+                          <td className="px-4 py-2">
+                            {row.ReceiverMobile2 || "-"}
+                          </td>
+                          <td className="px-4 py-2">
+                            {row.ReceiverArea || "-"}
+                          </td>
+                          <td className="px-4 py-2">{row.NoOfPieces || "-"}</td>
+                          <td className="px-4 py-2">{row.Branch || "-"}</td>
+                          <td className="px-4 py-2">{row.City || "-"}</td>
+                          <td className="px-6 flex gap-4 py-4 text-center">
+                            <button
+                              onClick={() =>
+                                navigate(`/edit-booking/edit/${row._id}`)
+                              }
+                              className="cursor-pointer text-green-600 hover:text-blue-800"
+                            >
+                              Edit Booking
+                            </button>
 
+                            <button
+                              onClick={() =>
+                                handleDelete(row._id, row.BiltyNo, row.status)
+                              }
+                              className="cursor-pointer text-red-600 hover:text-blue-800"
+                            >
+                              {deleteLoadingId === row._id
+                                ? "Deleting..."
+                                : "Delete Booking"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="text-center py-8 text-red-600 font-semibold text-lg">
+                  No Bookings Found
+                </div>
+              )}
 
-                      </button>
-                    </td>
-                  </tr>
-                })}
-              </tbody>
-            </table>
-          ) : (
-            <div className="text-center py-8 text-red-600 font-semibold text-lg">
-              No Bookings Found
-            </div>
-          )}
-          
-                  <div className="flex justify-center items-center mt-4 space-x-2 mb-4">
-                     <button
+              <div className="flex justify-center items-center mt-4 space-x-2 mb-4">
+                <button
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1 || itemsPerPage === "All"}
                   className={`px-3 py-1 border rounded disabled:opacity-50
-                     ${currentPage === 1 ? '':'cursor-pointer'}`}
+                     ${currentPage === 1 ? "" : "cursor-pointer"}`}
                 >
                   Prev
+                </button>
+                {itemsPerPage !== "All" &&
+                  Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-3 py-1 border rounded ${
+                        currentPage === i + 1
+                          ? "bg-blue-500 text-white"
+                          : "bg-white"
+                      } cursor-pointer`}
+                    >
+                      {i + 1}
                     </button>
-                    {itemsPerPage !== "All" &&
-    Array.from({ length: totalPages }, (_, i) => (
-      <button
-        key={i}
-        onClick={() => setCurrentPage(i + 1)}
-        className={`px-3 py-1 border rounded ${
-          currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white"
-        } cursor-pointer`}
-      >
-        {i + 1}
-      </button>
-    ))}
-                       <button
+                  ))}
+                <button
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={currentPage === totalPages || itemsPerPage === "All"}
-                  className={`px-3 py-1 border rounded disabled:opacity-50 ${currentPage === totalPages ? '':'cursor-pointer'}`}
+                  disabled={
+                    currentPage === totalPages || itemsPerPage === "All"
+                  }
+                  className={`px-3 py-1 border rounded disabled:opacity-50 ${
+                    currentPage === totalPages ? "" : "cursor-pointer"
+                  }`}
                 >
                   Next
-                    </button>
-                  </div>
-        </div>
+                </button>
               </div>
-              <div className='flex justify-center  mb-5'>
-        <button className={` px-3 py-1 border rounded bg-blue-500 text-white disabled:opacity-50 cursor-pointer`} onClick={() => {
-          if (branch.length > 0 && bookings.length > 0) {
-            setShowModal(true)
-            
-          }
-          else {
-            toast.error("Branch and Bookings Data required to open")
-          }
-        }}>
-            Export Csv
-          </button>
-        </div>
-          </>
-          
-        )
-      }
-        
-
-      </div>
+            </div>
+          </div>
+          <div className="flex justify-center  mb-5">
+            <button
+              className={` px-3 py-1 border rounded bg-blue-500 text-white disabled:opacity-50 cursor-pointer`}
+              onClick={() => {
+                if (branch.length > 0 && bookings.length > 0) {
+                  setShowModal(true);
+                } else {
+                  toast.error("Branch and Bookings Data required to open");
+                }
+              }}
+            >
+              Export to xlsx
+            </button>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
