@@ -6,6 +6,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 const Header = () => {
+    const role = sessionStorage.getItem("role") || "user"; 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { user, setUser } = useAuth();
     const navigate = useNavigate();
@@ -18,14 +19,29 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-    const headerMenuItems = [
-    { label: "Home", path: "/" },
-    { label: "Booking", path: "/add-booking" },
+    const adminLinks  = [
+    // { label: "Home", path: "/" },
+    // { label: "Booking", path: "/add-booking" },
     { label: "Container", path: "/container" },
     { label: "All Bookings", path: "/all-bookings" },
     { label: "All Containers", path: "/all-containers" },
     { label: "Services", path: "/services" },
   ];
+
+ const commonLinks = [
+      { label: "Home", path: "/" },
+    { label: "Booking", path: "/add-booking" },
+
+  ];
+
+
+
+  // Decide which links to show
+  const linksToShow =
+    role === "admin" ? [...commonLinks,...adminLinks ] : commonLinks;
+
+
+
 
   const guestLinks = [
     // { label: "User Login", path: "/user-login" },
@@ -244,7 +260,7 @@ const Header = () => {
       if (user) {
         return (
           <>
-            {headerMenuItems.map((m) => (
+            {linksToShow.map((m) => (
               <Link
                 key={m.path}
                 to={m.path}
@@ -273,7 +289,7 @@ const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-      <div className="container mx-auto px-4 lg:px-8">
+      <div className="mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
@@ -284,11 +300,13 @@ const Header = () => {
                 </span>
               </div> */}
               <div className="flex flex-1 items-center ">
+                <Link to={'/'}>
                 <img
                   src={Logo}
                   alt="Professional delivery service"
                   className="w-16  rounded-2xl"
                 />
+                </Link>
                 <div className="pl-3">
                   <h3 className="text-red-700 text-xl font-bold ">PCC</h3>
                   <p className="text-sm text-red-700 -mt-1">

@@ -29,7 +29,7 @@ export interface BookingFormData {
     SenderIdNumber: string;
     SenderAddress: string;
     SenderArea: string;
-    
+    totalWeight: string;
     ReceiverName: string;
     ReceiverMobile1: string;
     ReceiverMobile2: string;
@@ -52,7 +52,6 @@ export interface BookingFormData {
     AmountInWords: string;
     InvoiceTotal: string;
     City: string;
-    
     InvoiceNo?: string; // Optional field, likely set after submission
 }
 

@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import CsvModal from '@/components/CsvModal';
 
 const BookingList = () => {
+
   const [bookings, setBookings] = useState([]);
   const [bookingLoading, setbookingLoading] = useState(true);
   const [deleteLoadingId, setDeleteLoadingId] = useState(null);
@@ -19,6 +20,7 @@ const BookingList = () => {
   const [showModal, setShowModal] = useState(false);
   const [branch, setBranch] = useState([]);
   const navigate = useNavigate();
+const role = sessionStorage.getItem("role") || "user";
 
 
   const getBookings = async () => { 
@@ -125,6 +127,38 @@ const BookingList = () => {
         else toast.error('Something went wrong');
       }
     };
+  
+  const [file, setFile] = useState(null);
+  const [message, setMessage] = useState("");
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setMessage("Please select a file first!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+   const res = await axios.post(AppRoutes.importExcel, formData, {
+     headers: { "Content-Type": "multipart/form-data" },
+   });
+
+      //setMessage(res.data.message || "File uploaded successfully!");
+      toast.success(res.data.message || "File uploaded successfully!")
+      setTimeout(() => {
+  window.location.reload();
+}, 1000);
+
+    } catch (err) {
+      //setMessage("Upload failed: " + err.message);
+       toast.error("Upload failed: " + err.message)
+    }}
   return (
     <div className="bg-gray-50 min-h-screen">
       {showModal && (
@@ -141,10 +175,34 @@ const BookingList = () => {
         </div>
       ) : (
         <>
-          <h1 className="text-center text-2xl font-bold text-blue-800 px-4 pt-6 pb-2">
-            All Bookings Details
-          </h1>
+<div className="flex flex-col items-center gap-8 bg-white shadow-md rounded-2xl p-8 max-w-md mx-auto mt-10">
+  <h1 className="text-2xl font-bold text-blue-800 text-center">
+    All Bookings Details
+  </h1>
+{role==="admin" ?
+  <div className="w-full text-center">
+    <h2 className="text-lg font-semibold text-gray-700 mb-4">
+      Upload Excel File
+    </h2>
 
+    <input
+      type="file"
+      accept=".xlsx,.xls"
+      onChange={handleFileChange}
+      className="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
+    />
+
+    <button
+      onClick={handleUpload}
+      className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
+    >
+      Upload
+    </button>
+
+    <p className="mt-4 text-gray-700 text-sm">{message}</p>
+  </div>
+  :""}
+</div>
           {/* âœ… SEARCH BAR */}
           <div className="flex justify-center mb-4 relative w-1/2 mx-auto">
             <input
@@ -208,6 +266,8 @@ const BookingList = () => {
                       <th className="px-6 py-3">Receiver Mobile 2</th>
                       <th className="px-6 py-3">Receiver City</th>
                       <th className="px-6 py-3">No. of Pieces</th>
+                      <th className="px-6 py-3">Total weight</th>
+                      <th className="px-6 py-3">Total Amount</th>
                       <th className="px-6 py-3">Branch</th>
                       <th className="px-6 py-3">City</th>
                       <th className="px-6 py-3 text-center">Actions</th>
@@ -220,7 +280,12 @@ const BookingList = () => {
                       return (
                         <tr
                           key={index}
-                          className="bg-white border-b hover:bg-gray-50 text-center"
+                          //className="bg-white border-b hover:bg-gray-50 text-center"
+                        className={
+                            index % 2 === 0
+                            ? 'bg-gray-200 hover:bg-gray-300  border-b text-center'
+                            : 'bg-white hover:bg-slate-300 border-b text-center'
+                            }
                         >
                           <td className="px-4 py-2">
                             {startIndex + index + 1}
@@ -250,28 +315,38 @@ const BookingList = () => {
                             {row.ReceiverArea || "-"}
                           </td>
                           <td className="px-4 py-2">{row.NoOfPieces || "-"}</td>
+                         <td className="px-4 py-2">{row.totalWeight || "-"} KG</td>
+                          <td className="px-4 py-2">{row.InvoiceTotal || "-"}</td>
+
                           <td className="px-4 py-2">{row.Branch || "-"}</td>
                           <td className="px-4 py-2">{row.City || "-"}</td>
                           <td className="px-6 flex gap-4 py-4 text-center">
-                            <button
-                              onClick={() =>
-                                navigate(`/edit-booking/edit/${row._id}`)
-                              }
-                              className="cursor-pointer text-green-600 hover:text-blue-800"
-                            >
-                              Edit Booking
-                            </button>
+                           
+                             <div className="flex gap-2">
+    {/* Edit / View Button */}
+    <button
+      onClick={() =>
+        role === "admin"
+          ? navigate(`/edit-booking/edit/${row._id}`) // admin can edit
+          : navigate(`/edit-booking/edit/${row._id}`) // user can only view
+      }
+      className="cursor-pointer text-green-600 hover:text-blue-800"
+    >
+      {role === "admin" ? "Edit Booking" : "View Booking"}
+    </button>
 
-                            <button
-                              onClick={() =>
-                                handleDelete(row._id, row.BiltyNo, row.status)
-                              }
-                              className="cursor-pointer text-red-600 hover:text-blue-800"
-                            >
-                              {deleteLoadingId === row._id
-                                ? "Deleting..."
-                                : "Delete Booking"}
-                            </button>
+    {/* Delete Button only for admin */}
+    {role === "admin" && (
+      <button
+        onClick={() =>
+          handleDelete(row._id, row.BiltyNo, row.status)
+        }
+        className="cursor-pointer text-red-600 hover:text-blue-800"
+      >
+        {deleteLoadingId === row._id ? "Deleting..." : "Delete Booking"}
+      </button>
+    )}
+  </div>
                           </td>
                         </tr>
                       );

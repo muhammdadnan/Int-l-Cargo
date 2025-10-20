@@ -5,46 +5,42 @@ import { exportToExcel } from '../lib/helper/excel-booking';
 const CsvModal = ({ setShowModal, branches, bookings }) => {
     // console.log(branches);
     const [branch,setBranch] = useState('')   
+    
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [error, setError] = useState('')   
 
-    const handleExport = () => {
-        if (!branch) {
-            setError("Branch is required")
-        }
-        else if (!startDate) {
-            setError("Start Date is required")
-        }
-        else if (!endDate) {
-            setError("End Date is required")
-        }
-        else if (new Date(endDate) < new Date(startDate)) {
-            setError("End Date cannot be earlier than Start Date");
-        }
-        else {
-          setError('')
-          const filtered = bookings.filter((b) => {
-              const bookingDate = new Date(b.BookingDate);
-              return (
-                  b.Branch === branch &&               
-                  bookingDate >= new Date(startDate) &&
-                  bookingDate <= new Date(endDate)       
-              );
-          });
-          if (filtered.length === 0) {
-               toast.error("No bookings found for selected filters");
-                return;
-          }
-          console.log(filtered);
-          
-          // finally export tocsv file
+  const handleExport = () => {
+  if (!branch) {
+    setError("Branch is required");
+  } else if (!startDate) {
+    setError("Start Date is required");
+  } else if (!endDate) {
+    setError("End Date is required");
+  } else if (new Date(endDate) < new Date(startDate)) {
+    setError("End Date cannot be earlier than Start Date");
+  } else {
+    setError("");
 
-          exportToExcel(filtered)
-            
+    const filtered = bookings.filter((b) => {
+      const bookingDate = new Date(b.BookingDate);
+      return (
+        // agar branch == "ALL" hai to branch check skip karo
+        (branch === "ALL" || b.Branch === branch) &&
+        bookingDate >= new Date(startDate) &&
+        bookingDate <= new Date(endDate)
+      );
+    });
 
-        }
+    if (filtered.length === 0) {
+      toast.error("No bookings found for selected filters");
+      return;
     }
+
+    console.log(filtered);
+    exportToExcel(filtered);
+  }
+};
 
     useEffect(() => {
     if (error) {
@@ -73,18 +69,19 @@ const CsvModal = ({ setShowModal, branches, bookings }) => {
           {/* Branch Select */}
           <div className="mb-4">
             <label className="block mb-1 font-semibold">Select Branch</label>
-            <select
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">-- Select Branch --</option>
-              {branches.map((branch, index) => (
-                <option value={branch.branch} key={index}>
-                  {branch.branch}
-                </option>
-              ))}
-            </select>
+     <select
+  value={branch}
+  onChange={(e) => setBranch(e.target.value)}
+  className="w-full border rounded px-3 py-2"
+>
+  <option value="">-- Select Branch --</option>
+  <option value="ALL">All Branches</option>
+  {branches.map((b, index) => (
+    <option key={index} value={b.branch}>
+      {b.branch}
+    </option>
+  ))}
+</select>
           </div>
 
           {/* Date Range */}

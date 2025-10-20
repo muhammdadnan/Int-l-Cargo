@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import EditInvoiceForm from "../components/EditInvoiceForm";
 
 const EditBooking = () => {
+
   const { id } = useParams();
   const navigate = useNavigate();
   const { loading } = useAuth(); // 👈 make sure this is a hook call

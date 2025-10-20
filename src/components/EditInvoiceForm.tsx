@@ -30,7 +30,8 @@ import PhoneNumberInput from './PhoneNumberInput';
       const [showNewShipment, setShowNewShipment] = useState(false); // at the top
       const  [whatsappLoading,setwhatsappLoading] = useState(false)
 
-    
+      const role = sessionStorage.getItem("role") || "user";
+
   const handleEditInvoiceClick = () => {
     setReadonlyMode(false);
     setIsEditClicked(true);
@@ -42,7 +43,7 @@ import PhoneNumberInput from './PhoneNumberInput';
     SenderIdNumber: bookingData.SenderIdNumber || '',
     SenderAddress: bookingData.SenderAddress || '',
     SenderArea: bookingData.SenderArea || '',
-
+   totalWeight: bookingData.totalWeight || '',
     ReceiverName: bookingData.ReceiverName || '',
     ReceiverMobile1: bookingData.ReceiverMobile1 || '',
     ReceiverMobile2: bookingData.ReceiverMobile2 || '',
@@ -327,69 +328,100 @@ setShowNewShipment(true);
     }
 
 useEffect(() => {
-  const charges = formData.Charges || {};
-  const allCharges = Object.entries(charges);
-
-  // Subtotal = sum of all charges (excluding Discount)
-  let totalCharges = allCharges.reduce((sum, [key, value]) => {
-    if (key === "Discount") return sum; // skip
-    const total = parseFloat(value.total) || 0;
-    return sum + total;
-  }, 0);
-
-  // Apply discount if present
-  const discount = parseFloat(charges.Discount?.total) || 0;
-  // subtotal -= discount;
-  const subtotal = Math.max(0, totalCharges - discount);
-  // Filter enabled charges only
-  const selectedCharges = allCharges.filter(
-    ([key, value]) => value.enabled && key !== 'Discount'
-  );
-
-  // Calculate total from enabled charges
-  // let selectedTotal = enabledCharges.reduce((sum, [, charge]) => {
-  //   const total = parseFloat(charge.total) || 0;
-  //   return sum + total;
-  // }, 0);
-         let selectedTotal = selectedCharges.reduce((sum, [_, charge]) => {
-    const total = parseFloat(charge.total) || 0;
-    return sum + total;
-  }, 0);
-
-  // if (selectedTotal > 0) selectedTotal -= discount;
-
-  // VAT on selected charges (after discount)
-  // const vatRate = parseFloat(formData.Vat) || 0;
-  // const vatTotal = (selectedTotal * vatRate) / 100;
-const vatPercent = parseFloat(formData.Vat) || 0;
-  const vatTotal = (selectedTotal * vatPercent) / 100;
+  interface ChargeType {
+    enabled: boolean;
+    unitRate: string;
+    qty: string;
+    total: string;
+  }
   
-  // Final invoice total
-  // const invoiceTotal = subtotal + vatTotal;
-
-  // // Optional: Convert to words
-  // const amountInWords = numberToWords(invoiceTotal.toFixed(2));
-  const invoiceTotal = subtotal + vatTotal;
+  interface Charges {
+    FreightCharges: ChargeType;
+    Insurance: ChargeType;
+    Packing: ChargeType;
+    Customs: ChargeType;
+    Clearance: ChargeType;
+    OtherCharges: ChargeType;
+    Discount: ChargeType;
+  }
   
-    const amountInWords = numberToWords(invoiceTotal.toFixed(2));
-  
-  setFormData((prev) => ({
-    ...prev,
-    SubTotal: subtotal.toFixed(2),
-    VatTotal: vatTotal.toFixed(2),
-    InvoiceTotal: invoiceTotal.toFixed(2),
-    AmountInWords: amountInWords,
-  }));
-}, [formData.Charges, formData.Vat]);
+ const allCharges = Object.entries(formData.Charges) as [keyof Charges, ChargeItem][];
+           // console.log(allCharges);
+           let totalCharges = allCharges.reduce((sum, [key,value]) => {
+             
+             if (key === 'Discount') return sum; // Skip Discount
+             const total = parseFloat(value.total) || 0;
+             return sum + total;
+           }, 0);
+           // Apply discount only if enabled
+           const discount = parseFloat(formData.Charges.Discount?.total) || 0;
+           // console.log(discount);
+             
+ 
+           // subtotal -= discount;
+           // ✅ Calculate total of enabled charges (excluding Discount)
+   const selectedCharges = allCharges.filter(
+     ([key, value]) => value.enabled && key !== 'Discount'
+   );
+   
+           const subtotal = Math.max(0, totalCharges)
+           
+          
+       // const selectedCharges = allCharges.filter(([key,value]) => value.enabled);
+       // console.log(selectedCharges);
+       
+           // let selectedTotal = selectedCharges.reduce((sum, [key,charge]) => {
+           //   const total = parseFloat(charge.total) || 0;
+           //   return sum + total ;
+           // }, 0);
+            let selectedTotal = selectedCharges.reduce((sum, [_, charge]) => {
+     const total = parseFloat(charge.total) || 0;
+     return sum + total;
+   }, 0);
+ 
+    // ✅ VAT should apply only on enabled, non-discount charges
+   const vatPercent = parseFloat(formData.Vat) || 0;
+   const vatTotal = (selectedTotal * vatPercent) / 100;
+       
+           // if(selectedTotal > 0) selectedTotal -=discount
+           // selectedTotal -=discount
+           // const vatPercent = parseFloat(formData.Vat) || 0;
+           // const vatTotal = (selectedTotal * vatPercent / 100);
+         
+         // ✅ Apply discount AFTER VAT calculation
+   let discountApply;
+         if (selectedTotal){
+       discountApply = subtotal + vatTotal;
+         }
+         else{
+           discountApply = subtotal - discount
+         } 
+   const invoiceTotal = discountApply;
+ 
+   const amountInWords = numberToWords(invoiceTotal.toFixed(2));
+ 
+           // const invoiceTotal = subtotal + vatTotal ;
+        
+         // const amountInWords = numberToWords(invoiceTotal.toFixed(2));
+         // console.log(amountInWords);
+         
+           setFormData(prev => ({
+             ...prev,
+             SubTotal: subtotal.toFixed(2),
+             VatTotal: vatTotal.toFixed(2),
+             InvoiceTotal: invoiceTotal.toFixed(2),
+             AmountInWords:amountInWords
+           }));
+         }, [formData.Charges, formData.Vat]);
+     
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-6">
         <div className='max-w-7xl mx-auto bg-white shadow-xl rounded-xl p-6 space-y-6'>
             <form onSubmit={handleEdit} className="">
             <div className="flex justify-between items-center border-b pb-4">
-                <h1 className="text-2xl font-bold text-gray-800">
-                ABCD – CARGO SERVICES
-                </h1>
+                <h1 className="text-2xl font-bold text-red-600">
+                  Pak Chinar Int'I Cargo                </h1>
                 <h2 className="text-xl font-semibold text-gray-700">
                 New Invoice Entry
                 </h2>
@@ -515,7 +547,7 @@ const vatPercent = parseFloat(formData.Vat) || 0;
   value={formData[sender.key] || ""}
   onChange={handleChange} // add this if you're using controlled components
   // cols="48"
-   rows="6"
+   rows={6}
  className="sm:w-full md:w-[400px] lg:w-[700px] xl:w-[900px] border rounded px-2 py-1"
 />
 
@@ -528,7 +560,7 @@ const vatPercent = parseFloat(formData.Vat) || 0;
   value={formData[sender.key] || ""}
   onChange={handleChange} // add this if you're using controlled components
   // cols="48"
-   rows="4"
+   rows={4}
  className="sm:w-full md:w-[400px] lg:w-[700px] xl:w-[900px] border rounded px-2 py-1"
 />
 
@@ -567,6 +599,7 @@ const vatPercent = parseFloat(formData.Vat) || 0;
                     { label: "Address", key: "ReceiverAddress" },
                     { label: "City", key: "ReceiverArea" },
                     { label: "No Of Pieces", key: "NoOfPieces" },
+                    { label: "", key: "totalWeight" },
                 ].map((reciever,index) => (
                   <div key={index} className="mb-2">
                     {
@@ -577,6 +610,7 @@ const vatPercent = parseFloat(formData.Vat) || 0;
                     </label>)
                         
                     }
+                    
                     {/* <label className="block text-sm font-medium text-gray-700">
                         {reciever.label}
                     </label> */}
@@ -621,7 +655,27 @@ const vatPercent = parseFloat(formData.Vat) || 0;
                                     
                                 />
                                 </div>
-                            ):
+                            ): 
+
+                              
+
+
+                            reciever.key === "totalWeight" ? (
+          <div className="w-[200px] ml-auto">
+            <label className="block text-sm font-medium text-gray-700">
+              {/* {reciever.label} */}Total Weight
+            </label>
+      <input
+  readOnly={readonlyMode}
+  name={reciever.key}
+  type="text"
+  className="w-full border rounded px-2 py-1"
+  value={formData[reciever.key]}
+  onChange={handleChange}
+  inputMode="numeric"
+/>
+          </div>)
+          :
                              
                            
                     (<input 
@@ -635,6 +689,7 @@ const vatPercent = parseFloat(formData.Vat) || 0;
                 
                         
                     />)
+                    
                     }
                     {errors[reciever.key] && (
                         <p className="text-sm text-red-600 mt-1">{errors[reciever.key]}</p>
@@ -844,135 +899,78 @@ const vatPercent = parseFloat(formData.Vat) || 0;
 )}
 
           
-              <div className="flex flex-wrap gap-4 justify-center pt-4">
-                  {[
-                  // {label:"Save & Print"},
-                  // "Save PDF",
-                  // "Edit Invoice",
-                  // "Del. Invoice",
-                  // "PDF To Whatsapp",
-                  {
-                    label: "Save & Print",
-                      onClick: () => {
-                        if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
-                          handlePdfSave(formData, 'Save&PRINT',bookingData.status,formData.AmountInWords)
-                        }
-                        else {
-                          toast.error("Cannot Print PDF without Tracking Id,Invoice No,Branch and City")
-                        }
-                      },
-                  },
-                  {
-                    label: "Save PDF",
-                    onClick: () =>  {
-                      if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
-                        handlePdfSave(formData, 'SavePDF',bookingData.status,formData.AmountInWords)
-                      }
-                      else {
-                        toast.error("Cannot create PDF without Tracking Id,Invoice No,Branch and City")
-                      }
-                    },
-                  },
-                  {
-                    label: "Edit Invoice",
-                    onClick: () => {
-                      if (formData.BiltyNo) {
-                        handleEditInvoiceClick();
-                      } else {
-                        toast.error("Cannot edit fields without Bilty and Invoice No");
-                      }
-                    }
-                  },
-                  {
-                    label: "Del. Invoice",
-                    onClick: () => handleDelete(formData.BiltyNo,bookingData),
-                    // onClick: () => {},
-                    isLoading: isDeleting
-                  },
-                  {
-                    label: "PDF To Whatsapp",
-                    isLoading:whatsappLoading
-                  },
-            ].map(({ label, onClick, isLoading }, index) => {
-              if (label === 'Edit Invoice') {
-              return  <button
-                      key={index}
-                      onClick={onClick}
-                      disabled={isLoading}
-                      className={`${!readonlyMode ? 'bg-gray-500 text-white cursor-not-allowed': 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'}  px-4 py-2 rounded shadow-md`}
-                  >
-                      {isLoading ? (
-            <div className="flex justify-center">
-              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
-            </div>
-          ) : (
-            label
-          )}
-                  </button>
-              }
-              if (label === 'PDF To Whatsapp') {
-                                    
-                                  return    <button
-                                    key={index}
-                                    onClick={() => {
-                                       if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
-                                      const file = handlePdfSave(formData, "SendToWhatsapp", 'Shipment in Godown', formData.AmountInWords);
-                                    if(file) handleSend(formData,file,setwhatsappLoading)
-                                    }
-                                    else {
-                                      toast.error("Cannot send PDF without Tracking Id,Invoice No,Branch and City")
-                                    }
-                                    
-                                  }}
-                                    disabled={isLoading}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md cursor-pointer"
-                                >
-                                    {isLoading ? (
-                          <div className="flex justify-center">
-                            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                              />
-                            </svg>
-                          </div>
-                        ) : (
-                          label
-                        )}
-                                </button>
-                                  }
-                    return  <button
-                      key={index}
-                      onClick={onClick}
-                      disabled={isLoading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md cursor-pointer"
-                  >
-                      {isLoading ? (
-            <div className="flex justify-center">
-              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
-            </div>
-          ) : (
-            label
-          )}
-                  </button>
-                  })}
-              </div>
+         
+
+<div className="flex flex-wrap gap-4 justify-center pt-4">
+  {[
+    {
+      label: "Save & Print",
+      onClick: () => {
+        if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
+          handlePdfSave(formData, 'Save&PRINT', bookingData.status, formData.AmountInWords)
+        } else {
+          toast.error("Cannot Print PDF without Tracking Id,Invoice No,Branch and City")
+        }
+      },
+    },
+    {
+      label: "Save PDF",
+      onClick: () => {
+        if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
+          handlePdfSave(formData, 'SavePDF', bookingData.status, formData.AmountInWords)
+        } else {
+          toast.error("Cannot create PDF without Tracking Id,Invoice No,Branch and City")
+        }
+      },
+    },
+    {
+      label: "Edit Invoice",
+      onClick: () => {
+        if (formData.BiltyNo) handleEditInvoiceClick()
+        else toast.error("Cannot edit fields without Bilty and Invoice No")
+      },
+      adminOnly: true
+    },
+    {
+      label: "Del. Invoice",
+      onClick: () => handleDelete(formData.BiltyNo, bookingData),
+      isLoading: isDeleting,
+      adminOnly: true
+    },
+    {
+      label: "PDF To Whatsapp",
+      onClick: () => {
+        if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
+          const file = handlePdfSave(formData, "SendToWhatsapp", 'Shipment in Godown', formData.AmountInWords);
+          if(file) handleSend(formData, file, setwhatsappLoading)
+        } else toast.error("Cannot send PDF without Tracking Id,Invoice No,Branch and City")
+      },
+      isLoading: whatsappLoading,
+      adminOnly: true
+    }
+  ].map(({ label, onClick, isLoading, adminOnly }, index) => {
+    // Role-based filter
+    if (adminOnly && role !== "admin") return null;
+
+    return (
+      <button
+        key={index}
+        onClick={onClick}
+        disabled={isLoading}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md cursor-pointer"
+      >
+        {isLoading ? (
+          <div className="flex justify-center">
+            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          </div>
+        ) : label}
+      </button>
+    );
+  })}
+</div>
         </div>
         
       </div>

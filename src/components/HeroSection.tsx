@@ -40,37 +40,38 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
       </div>
 
-      <div className="container relative z-10 mx-auto px-4 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      <div className="relative z-10 px-4 lg:px-8">
+        <div className="grid lg:grid-cols-1 gap-8">
           {/* Hero Content */}
-          <div className="text-center lg:text-left">
-            <h1 className="text-4xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Delivering happiness across the world.
-            </h1>
-            <p className="text-lg lg:text-xl text-white/90 mb-8 max-w-lg mx-auto lg:mx-0">
-              Fast and secure cargo & couriers in Saudi Arabia.
-            </p>
+       <div className="text-left ">
+  <h1 className="text-4xl lg:text-6xl font-bold text-white leading-tight mb-6">
+    Delivering happiness across the world.
+  </h1>
+  <p className="text-lg lg:text-xl text-white/90 mb-8 max-w-lg">
+    Fast and secure cargo & couriers in Saudi Arabia.
+  </p>
 
-            {/* Tracking Section */}
-            <div className="bg-white/95 backdrop-blur rounded-lg p-6 shadow-xl max-w-screen-2xl mx-auto lg:mx-0">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Input
-                  type="text"
-                  placeholder="Enter Invoice No."
-                  value={trackingNumber}
-                  onChange={handleChange}
-                  className="flex-1"
-                  name="invoiceNo"
-                />
-                <Button
-                  onClick={handleTrack}
-                  className="bg-brand-orange hover:bg-brand-orange-light text-white font-medium px-8 py-2 whitespace-nowrap"
-                >
-                  TRACK IT
-                </Button>
-              </div>
-            </div>
-          </div>
+  {/* Tracking Section */}
+  <div className="bg-white/95 backdrop-blur rounded-lg p-6 shadow-xl max-w-screen-3xl">
+    <div className="flex flex-col sm:flex-row gap-3 w-full items-center">
+      <Input
+        type="text"
+        placeholder="Enter Invoice No."
+        value={trackingNumber}
+        onChange={handleChange}
+        className="flex-1 h-20 w-40"
+        name="invoiceNo"
+      />
+      <Button
+        onClick={handleTrack}
+        className="bg-brand-orange hover:bg-brand-orange-light text-white font-medium px-12 py-4 whitespace-nowrap mt-5 sm:mt-0"
+      >
+        TRACK IT
+      </Button>
+    </div>
+  </div>
+</div>
+
 
           {/* Hero Image Space for larger screens */}
           <div className="hidden lg:block"></div>
