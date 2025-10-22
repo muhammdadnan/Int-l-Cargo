@@ -29,6 +29,27 @@ const ContactForm = () => {
         }
       );
   };
+
+
+const ContactForm = () => {
+ const form = useRef();
+ 
+ 
+  const sendEmail = (e: any) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm("service_mwgc23c", "template_uisxko9", form.current, "yJ4VhUPY00WlmFqbw")
+      .then(
+        (response) => {
+          console.log("SUCCESS!", response.status, response.text);
+        },
+        (error) => {
+          console.log("FAILED...", error);
+        }
+      );
+  }
+}
   return (
     <div>
       <h1 className="text-5xl font-extrabold text-center text-blue-800 mt-7">
