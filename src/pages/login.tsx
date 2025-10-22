@@ -20,11 +20,11 @@ const Login = () => {
         setEmailErr('');
         setPasswordErr('');
           // Simple email regex for validation
-          const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      if (!email.trim()) {
-        setEmailErr('Email are required!');
-        return;
-      }
+      //     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      // if (!email.trim()) {
+      //   setEmailErr('Email are required!');
+      //   return;
+      // }
      
       if (!password.trim()) {
         setPasswordErr('Password are required!');
@@ -32,14 +32,16 @@ const Login = () => {
         
       }
       
-      if (!isValidEmail) {
-        setEmailErr('Please enter a valid email address!');
-        return;
-      }
+      // if (!isValidEmail) {
+      //   setEmailErr('Please enter a valid email address!');
+      //   return;
+      // }
     const response = await axios.post(AppRoutes.login,{email,password})
     const data = response.data;
-    
+    console.log("userss " ,response.data)
     sessionStorage.setItem('token',data?.data?.userData?.accessToken)
+    sessionStorage.setItem("role", data?.data?.userData?.role);
+
     setUser(data?.data?.userData?.email)
     console.log(data);
     
@@ -95,7 +97,7 @@ const Login = () => {
               Email
             </div>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="flex-1 px-4 py-3 border-2 border-red-500 focus:outline-none focus:border-red-600 bg-gray-200"

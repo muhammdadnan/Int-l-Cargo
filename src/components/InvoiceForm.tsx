@@ -34,10 +34,10 @@ const InvoiceForm = ({cityList,branchList,loadingList}) => {
       ReceiverMobile2: "",
       ReceiverAddress: "",
       ReceiverArea: "",
-      
       ItemDetails:"",
       OtherDetails:"",
-
+      
+     totalWeight:"",
       NoOfPieces: "",
       Branch: "",
       BookingDate:new Date().toISOString().split('T')[0],
@@ -56,7 +56,6 @@ const InvoiceForm = ({cityList,branchList,loadingList}) => {
       SubTotal:"",
       Vat:"",
       VatTotal:"",
-      
       AmountInWords: '',
       InvoiceTotal: '',
       City: '',
@@ -143,7 +142,7 @@ const InvoiceForm = ({cityList,branchList,loadingList}) => {
             'NoOfPieces',
 ];
 
-const numberFields = ['SenderMobile', 'ReceiverMobile1', 'ReceiverMobile2', 'NoOfPieces'];
+const numberFields = ['SenderMobile', 'ReceiverMobile1', 'ReceiverMobile2', 'NoOfPieces',];
 
 const newErrors:Record<string, string> = {};
 
@@ -231,7 +230,7 @@ setErrors({});
       
       ItemDetails:"",
       OtherDetails:"",
-
+      totalWeight:"",
       NoOfPieces: "",
       Branch: "",
       BookingDate:new Date().toISOString().split('T')[0],
@@ -312,9 +311,8 @@ setErrors({});
         setIsDeleting(false)
       }
     }
-    useEffect(() => {
-          
-          const allCharges = Object.entries(formData.Charges) as [keyof Charges, ChargeItem][];
+   useEffect(() => {
+  const allCharges = Object.entries(formData.Charges) as [keyof Charges, ChargeItem][];
           // console.log(allCharges);
           let totalCharges = allCharges.reduce((sum, [key,value]) => {
             
@@ -325,15 +323,17 @@ setErrors({});
           // Apply discount only if enabled
           const discount = parseFloat(formData.Charges.Discount?.total) || 0;
           // console.log(discount);
-            const subtotal = Math.max(0, totalCharges - discount);
+            
 
           // subtotal -= discount;
           // ✅ Calculate total of enabled charges (excluding Discount)
   const selectedCharges = allCharges.filter(
     ([key, value]) => value.enabled && key !== 'Discount'
   );
+  
+          const subtotal = Math.max(0, totalCharges)
           
-      
+         
       // const selectedCharges = allCharges.filter(([key,value]) => value.enabled);
       // console.log(selectedCharges);
       
@@ -356,7 +356,14 @@ setErrors({});
           // const vatTotal = (selectedTotal * vatPercent / 100);
         
         // ✅ Apply discount AFTER VAT calculation
-  const invoiceTotal = subtotal + vatTotal;
+  let discountApply;
+        if (selectedTotal){
+      discountApply = subtotal + vatTotal;
+        }
+        else{
+          discountApply = subtotal - discount
+        } 
+  const invoiceTotal = discountApply;
 
   const amountInWords = numberToWords(invoiceTotal.toFixed(2));
 
@@ -373,7 +380,6 @@ setErrors({});
             AmountInWords:amountInWords
           }));
         }, [formData.Charges, formData.Vat]);
-      
     
     
     return (
@@ -381,8 +387,8 @@ setErrors({});
         <div className='max-w-7xl mx-auto bg-white shadow-xl rounded-xl p-6 space-y-6'>
             <form onSubmit={handleSubmit} className="">
             <div className="flex justify-between items-center border-b pb-4">
-                <h1 className="text-2xl font-bold text-gray-800">
-                ABCD – CARGO SERVICES
+                <h1 className="text-2xl font-bold text-red-600">
+                Pak Chinar Int'I Cargo
                 </h1>
                 <h2 className="text-xl font-semibold text-gray-700">
                 New Invoice Entry
@@ -463,180 +469,192 @@ setErrors({});
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
-                {/* Sender Details */}
-                <div>
-                <h3 className="text-lg font-bold text-blue-800 mb-2">
-                    Sender Details
-                </h3>
-                {[
-                    { label: "Name", key: "SenderName" },
-                    { label: "Mobile No", key: "SenderMobile" },
-                    { label: "ID Number", key: "SenderIdNumber" },
-                    { label: "Address", key: "SenderAddress" },
-                    { label: "City", key: "SenderArea" },
-                    { label: "Other Details", key: "OtherDetails" },
-                    { label: "Item Details", key: "ItemDetails" },
-                ].map((sender,index) => (
-                    <div key={index} className="mb-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                        {sender.label}
-                    </label>
-                    {
-                      loadingList ? (<h1>loading...</h1>) :
-                        (
-                          sender.key === "SenderArea" ? (
-                        
-                          <select
-                            disabled={isSubmitted && !isEditClicked}
-                          // readOnly={isSubmitted && !isEditClicked}
-                          name="SenderArea"
-                          value={formData.SenderArea}
-                          onChange={handleChange}
-                          className="w-full border rounded px-2 py-1"
-                          >
-                            <option value="">Select Area</option>
-                            {cityList.map((area:any, idx:any) => (
-                              <option key={idx} value={area.city}>
-                                {area.city}
-                              </option>
-                            ))}
-                          </select>
-                        ): 
-                          sender.key === "SenderMobile" ? (
-                        
-                            <PhoneNumberInput value={formData[sender.key]} handleChange={handleChange} name={sender.key} disable={isSubmitted && !isEditClicked}/>
-                        ) 
-                            : sender.key === "ItemDetails" ? (
-                        <textarea
-  name={sender.key}
-  value={formData[sender.key] || ""}
-  onChange={handleChange} // add this if you're using controlled components
-  // cols="100"
-  rows={6}
- className="sm:w-full md:w-[400px] lg:w-[700px] xl:w-[900px] border rounded px-2 py-1"
-/>
+          <div className="grid grid-cols-2 gap-6">
+  {/* Sender Details */}
+  <div>
+    <h3 className="text-lg font-bold text-blue-800 mb-2">Sender Details</h3>
 
-                            
-                        ):
-                             sender.key === "OtherDetails" ? (
-                        <textarea
-  name={sender.key}
-  value={formData[sender.key] || ""}
-  onChange={handleChange} // add this if you're using controlled components
-  // cols="60"
-  rows={4}
-  // className="w-full border rounded px-2 py-1"
-   className="sm:w-full md:w-[400px] lg:w-[700px] xl:w-[900px] border rounded px-2 py-1"
-/>
+    {loadingList ? (
+      <h1>loading...</h1>
+    ) : (
+      <>
+        {/* Normal Sender Fields */}
+        {[
+          { label: "Name", key: "SenderName" },
+          { label: "Mobile No", key: "SenderMobile" },
+          { label: "ID Number", key: "SenderIdNumber" },
+          { label: "Address", key: "SenderAddress" },
+          { label: "City", key: "SenderArea" },
+          { label: "Other Details", key: "OtherDetails" },
+          { label: "Item Details", key: "ItemDetails" },
+          
+        ].map((sender, index) => (
+          <div key={index} className="mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              {sender.label}
+            </label>
 
-                            
-                        ):
-                        
-                            (<input 
-                          readOnly={isSubmitted && !isEditClicked}
-                            name={sender.key}
-                            type="text"
-                            value={formData[sender.key]}
-                            onChange={handleChange}
-                            className="w-full border rounded px-2 py-1"
-                            />)
-                     )
-                    }
-                        {errors[sender.key] && (
-                        <p className="text-sm text-red-600 mt-1">{errors[sender.key]}</p>
-                        )}
-                    </div>
+            {sender.key === "SenderArea" ? (
+              <select
+                disabled={isSubmitted && !isEditClicked}
+                name="SenderArea"
+                value={formData.SenderArea}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1"
+              >
+                <option value="">Select Area</option>
+                {cityList.map((area: any, idx: any) => (
+                  <option key={idx} value={area.city}>
+                    {area.city}
+                  </option>
                 ))}
-                </div>
+              </select>
+            ) : sender.key === "SenderMobile" ? (
+              <PhoneNumberInput
+                value={formData[sender.key]}
+                handleChange={handleChange}
+                name={sender.key}
+                disable={isSubmitted && !isEditClicked}
+              />
+            ) : sender.key === "OtherDetails" ? (
+              <textarea
+                name={sender.key}
+                value={formData[sender.key] || ""}
+                onChange={handleChange}
+                rows={4}
+                className="sm:w-full md:w-[400px] lg:w-[700px] xl:w-[900px] border rounded px-2 py-1"
+              />
+            ) : 
+              sender.key === "ItemDetails" ? (
+                <textarea
+                  name={sender.key}
+                  value={formData[sender.key] || ""}
+                  onChange={handleChange}
+                  rows={4}
+                  className="flex flex-col sm:w-full md:w-[400px] lg:w-[700px] xl:w-[900px] border rounded px-2 py-1"
+                />
+            )
+            
+            :(
+              <input
+                readOnly={isSubmitted && !isEditClicked}
+                name={sender.key}
+                type="text"
+                value={formData[sender.key]}
+                onChange={handleChange}
+                className="w-full border rounded px-2 py-1"
+              />
+            )}
 
-                {/* Receiver Details */}
-                <div>
-                <h3 className="text-lg font-bold text-blue-800 mb-2">
-                    Receiver Details
-                </h3>
-                {[
-                    { label: "Name", key: "ReceiverName" },
-                    { label: "Mobile No 1", key: "ReceiverMobile1" },
-                    { label: "Mobile No 2", key: "ReceiverMobile2" },
-                    { label: "Address", key: "ReceiverAddress" },
-                    { label: "City", key: "ReceiverArea" },
-                    { label: "No Of Pieces", key: "NoOfPieces" },
-                ].map((reciever,index) => (
-                  <div key={index} className="mb-2">
-                    {
-                      reciever.key !== "NoOfPieces" &&
-                        
-                    (<label className="block text-sm font-medium text-gray-700">
-                        {reciever.label}
-                    </label>)
-                        
-                    }
-                    {
-                      reciever.key === "ReceiverArea" ? (
-                        <select
-                        disabled={isSubmitted && !isEditClicked}
-                        name="ReceiverArea"
-                        value={formData.ReceiverArea}
-                        onChange={handleChange}
-                        className="w-full border rounded px-2 py-1"
-                      >
-                        <option value="">Select Area</option>
-                        {cityList.map((area, idx) => (
-                          <option key={idx} value={area.city}>
-                            {area.city}
-                          </option>
-                        ))}
-                      </select>
-                      ) :
-                         reciever.key === "ReceiverMobile1" ? (
-                        
-                            <PhoneNumberInput value={formData[reciever.key]} handleChange={handleChange} name={reciever.key} disable={isSubmitted && !isEditClicked}/>
-                        ) 
-                            : 
-                         reciever.key === "ReceiverMobile2" ? (
-                        
-                            <PhoneNumberInput value={formData[reciever.key]} handleChange={handleChange} name={reciever.key} disable={isSubmitted && !isEditClicked}/>
-                        )  : reciever.key === "NoOfPieces" ? (
-                              <div className=" w-[200px] ml-auto">
-                                <label className="not-even: text-sm font-medium text-gray-700">
-                        {reciever.label}
-                        </label>
-                                <input 
-                                readOnly={isSubmitted && !isEditClicked}
-                                name={reciever.key}
-                                    type="text"
-                                    className="w-full border rounded px-2 py-1"
-                                    value={formData[reciever.key]}
-                                    onChange={handleChange}
-                                    inputMode="numeric"
-                            
-                                    
-                                />
-                                </div>
-                            )
-                             
-                            
-                            : 
-                    (<input 
-                    readOnly={isSubmitted && !isEditClicked}
-                    name={reciever.key}
-                        type="text"
-                        className="w-full border rounded px-2 py-1"
-                        value={formData[reciever.key]}
-                        onChange={handleChange}
-                        inputMode="numeric"
-                
-                        
-                    />)
-                    }
-                    {errors[reciever.key] && (
-                        <p className="text-sm text-red-600 mt-1">{errors[reciever.key]}</p>
-                    )}
-                    </div>
-                ))}
-                </div>
-            </div>
+            {errors[sender.key] && (
+              <p className="text-sm text-red-600 mt-1">{errors[sender.key]}</p>
+            )}
+          </div>
+        ))}
+      </>
+    )}
+  </div>
+
+  {/* Receiver Details */}
+  <div>
+    <h3 className="text-lg font-bold text-blue-800 mb-2">Receiver Details</h3>
+
+    {[
+      { label: "Name", key: "ReceiverName" },
+      { label: "Mobile No 1", key: "ReceiverMobile1" },
+      { label: "Mobile No 2", key: "ReceiverMobile2" },
+      { label: "Address", key: "ReceiverAddress" },
+      { label: "City", key: "ReceiverArea" },
+      { label: "No Of Pieces", key: "NoOfPieces" },
+      { label: "", key: "totalWeight" },
+    ].map((reciever, index) => (
+      <div key={index} className="mb-2">
+        {reciever.key !== "NoOfPieces" && (
+          <label className="block text-sm font-medium text-gray-700">
+            {reciever.label}
+          </label>
+        )}
+
+        {reciever.key === "ReceiverArea" ? (
+          <select
+            disabled={isSubmitted && !isEditClicked}
+            name="ReceiverArea"
+            value={formData.ReceiverArea}
+            onChange={handleChange}
+            className="w-full border rounded px-2 py-1"
+          >
+            <option value="">Select Area</option>
+            {cityList.map((area: any, idx: any) => (
+              <option key={idx} value={area.city}>
+                {area.city}
+              </option>
+            ))}
+          </select>
+        ) : reciever.key === "ReceiverMobile1" ? (
+          <PhoneNumberInput
+            value={formData[reciever.key]}
+            handleChange={handleChange}
+            name={reciever.key}
+            disable={isSubmitted && !isEditClicked}
+          />
+        ) : reciever.key === "ReceiverMobile2" ? (
+          <PhoneNumberInput
+            value={formData[reciever.key]}
+            handleChange={handleChange}
+            name={reciever.key}
+            disable={isSubmitted && !isEditClicked}
+          />
+        ) : reciever.key === "NoOfPieces" ? (
+          <div className="w-[200px] ml-auto">
+            <label className="block text-sm font-medium text-gray-700">
+              {reciever.label}
+            </label>
+            <input
+              readOnly={isSubmitted && !isEditClicked}
+              name={reciever.key}
+              type="text"
+              className="w-full border rounded px-2 py-1"
+              value={formData[reciever.key]}
+              onChange={handleChange}
+              inputMode="numeric"
+            />
+          </div>
+        ) : reciever.key === "totalWeight" ? (
+          <div className="w-[200px] ml-auto">
+            <label className="block text-sm font-medium text-gray-700">
+              {/* {reciever.label} */}Total Weight
+            </label>
+            <input
+              readOnly={isSubmitted && !isEditClicked}
+              name={reciever.key}
+              type="text"
+              className="w-full border rounded px-2 py-1"
+              value={formData[reciever.key]}
+              onChange={handleChange}
+              inputMode="numeric"
+            />
+          </div>
+        ) 
+        
+        : (
+          <input
+            readOnly={isSubmitted && !isEditClicked}
+            name={reciever.key}
+            type="text"
+            className="w-full border rounded px-2 py-1"
+            value={formData[reciever.key]}            onChange={handleChange}
+            inputMode="numeric"
+          />
+        )}
+
+        {errors[reciever.key] && (
+          <p className="text-sm text-red-600 mt-1">{errors[reciever.key]}</p>
+        )}
+      </div>
+    ))}
+  </div>
+</div>
+
             {/* Charges Table */}
                 
             <div>

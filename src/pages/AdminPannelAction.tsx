@@ -36,6 +36,7 @@ const AdminPannelAction = () => {
         }
       });
       console.log(response);
+      console.log("check",response.data?.data?.users);
       setData(response.data?.data?.users || []);
       
       
@@ -195,7 +196,7 @@ const AdminPannelAction = () => {
                 <th className="px-6 py-3 text-center whitespace-nowrap">
                   {actionType === 'branchAction' ? 'Branch' : actionType === 'userAction' ? 'Email' : 'City'}
                 </th>
-                <th className="px-6 py-3 text-center whitespace-nowrap">Actions</th>
+                <th className="px-6 py-3 text-left whitespace-nowrap">Actions</th>
               </tr>
             </thead>
             <tbody>

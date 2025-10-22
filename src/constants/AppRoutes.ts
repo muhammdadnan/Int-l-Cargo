@@ -44,7 +44,7 @@ export const AppRoutes = {
     allCity: BASE_URL + "/api/allCity",
     editCity: BASE_URL + "/api/editCity",
     deleteCity: BASE_URL + "/api/deleteCity",
-    
+      importExcel: `${BASE_URL}/api/import-excel`,
     // Add branch route
     addBranch: BASE_URL + "/api/addBranch",
     allBranch: BASE_URL + "/api/allBranch",

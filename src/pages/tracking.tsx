@@ -60,7 +60,7 @@ export default function Tracking() {
       const response = await axios.get(`${AppRoutes.tracking}/${invoiceNumber}`)
       const data = response.data
       console.log(data);
-      
+
       setTrackingData(data?.data?.foundTrackingId)
       // setShipmentContainerDetails(data?.data?.shipmentParts)
       setTrackingDetails(data?.data?.foundTrackingId?.tracking_details)
@@ -121,7 +121,7 @@ export default function Tracking() {
       {/* Top spacing to mimic screenshot white space */}
       <div className="h-8" />
 
-      <main className="mx-auto max-w-5xl px-4">
+      <main className="mx-auto max-w-full px-4">
         {/* Logo */}
         <div className="flex flex-col items-center">
           <img
@@ -140,39 +140,49 @@ export default function Tracking() {
         </div>
 
         {/* System title */}
-        <p className="mt-2 text-center text-sm tracking-wider text-gray-500">
+        <p className="mt-2 text-center text-3xl tracking-wider text-gray-500">
           Consignment Tracking System
         </p>
 
-        {/* Tracking Details  */}
-        <h1 className="mt-3 text-center text-xl font-semibold">
-                          Tracking Details for{" "}
-                          <span className="text-blue-700">{invoiceNumber}</span>
-                        </h1>
-                
-                        <Divider className="mx-auto mt-2 max-w-xs" />
-        {
-          trackingDetails.length > 0 &&
-          trackingDetails.map((detail,index)=>{
-            if (detail.containerNumber == 'N/A') {
-              return 
-            }
-            return <TrackingDetails
-            trackingData={trackingData}
-            trackingDetails={detail}
-            key={index} 
-            BookingDate={trackingData.BookingDate}
-            
-            />
-          })
-        }
-        {/* History */}
-        <h2 className="mt-10 text-center text-lg font-semibold">
-          Tracking History for{" "}
-          <span className="text-blue-700">{invoiceNumber}</span>
-        </h2>
-        <Divider className="mx-auto mt-2 max-w-xs" />
-        <TrackingHistory trackingHistory = {trackingHistory}/>
+      {/* Tracking Details */}
+<h1 className="mt-3 text-center text-6xl font-semibold">
+  Tracking Details for{" "}
+  <span className="text-blue-700">{invoiceNumber}</span>
+</h1>
+
+<Divider className="mx-auto mt-2 max-w-xs" />
+
+{trackingDetails.length > 0 &&
+  trackingDetails.map((detail, index) => {
+    // Filter related history for this detail
+    const relatedHistory = trackingHistory.filter(
+      (history) => history.containerNumber === detail.containerNumber
+    );
+
+    return (
+      <div key={index} className="mt-6 border rounded-lg p-4 shadow-sm bg-white">
+        {/* Tracking Detail */}
+        <TrackingDetails
+          trackingData={trackingData}
+          trackingDetails={detail}
+          BookingDate={trackingData.BookingDate}
+        />
+
+        {/* Related History for this detail */}
+        {relatedHistory.length > 0 && (
+          <>
+            <h3 className="mt-4 text-center text-md font-semibold text-gray-700 text-6xl">
+              History for Container:{" "}
+              <span className="text-blue-600">{detail.containerNumber}</span>
+            </h3>
+            <Divider className="mx-auto mt-2 max-w-xs" />
+            <TrackingHistory trackingHistory={relatedHistory} />
+          </>
+        )}
+      </div>
+    );
+  })}
+
     
        {/* <TrackingHistory/> */}
         {/* Back button */}

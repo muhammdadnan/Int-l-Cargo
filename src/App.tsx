@@ -27,6 +27,7 @@ import AdminPannel from "@/pages/admin-pannel";
 import AdminPannelAction from "@/pages/AdminPannelAction";
 import WhatsAppMarketing from "@/pages/whatsapp-marketing";
 import Tracking from "./pages/tracking";
+import Contact from "./pages/contact";
 
 
 const queryClient = new QueryClient();
@@ -72,7 +73,9 @@ return  <QueryClientProvider client={queryClient}>
           <Route element={<PublicRoute/>}>
             <Route path={'/privacy-policy'} element={<PrivacyPolicy/>}/>        
             <Route path={'/terms-of-services'} element={<Terms/>}/>
+            <Route path={'/terms-of-services'} element={<Terms/>}/>
             <Route path={'/login'} element={<Login/>}/>
+            <Route path={'/contact'} element={<Contact/>} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

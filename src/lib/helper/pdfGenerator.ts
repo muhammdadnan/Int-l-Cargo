@@ -70,6 +70,7 @@ export const handlePdfSave = (
   doc.text(`Tracking Id: ${safeText(formData.BiltyNo)}`, 15, companyY + 20);
   doc.text(`City: ${formData.City}`, 15, companyY + 26);
   doc.text(`Branch: ${formData.Branch}`, 15, companyY + 32);
+  doc.text(`Total Weight: ${formData.totalWeight} KG`, 15, companyY + 38);
 
   
   doc.setTextColor(255, 255, 255);

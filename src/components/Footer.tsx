@@ -147,48 +147,14 @@ const Footer = () => {
                   <p>+966 590 056199</p>
                 </div>
               </div>
-              <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-brand-orange mt-0.5 flex-shrink-0" />
-                <div className="text-gray-300">
-                  <p>Al-Thuqbah Office</p>
-                  <p>
-                    Al-Thuqbah, Rabigh Street 18, Opposite Fish Market, Near
-                    Graveyard.
-                  </p>
-                </div>
-              </div>
+
               <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-brand-orange flex-shrink-0" />
-                <div className="text-gray-300">
-                  <p>+966 580 129991</p>
-                  <p>+966 553 441378</p>
-                  <p>+966 591 080611</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-brand-orange mt-0.5 flex-shrink-0" />
-                <div className="text-gray-300">
-                  <p>AL HASSA(-HOFUF) Office </p>
-                  <p>
-                    Al-Hofuf Opposite General Court, Al Koot Al Naathil Mosque
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-brand-orange flex-shrink-0" />
-                <div className="text-gray-300">
-                  <p>+966 599 039931</p>
-                  <p>+966 539 328832</p>
-                  <p>+966 591 080611</p>
-                </div>
-              </div>
-              {/* <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-brand-orange flex-shrink-0" />
                 <div className="text-gray-300">
-                  <p>info@abccourier.com</p>
-                  <p>support@abccourier.com</p>
+                  <p>info@pakchinarcargo.com</p>
+                  <p>support@pakchinarcargo.com</p>
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

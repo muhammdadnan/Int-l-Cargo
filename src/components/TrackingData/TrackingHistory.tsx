@@ -4,7 +4,7 @@ import moment from 'moment'
 export const TrackingHistory = ({trackingHistory}:{trackingHistory:any[]}) => {
     return (
     <section className="mt-5 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-          <table className="min-w-full text-left text-sm">
+          <table className="min-w-full text-left text-3xl">
             <thead className="bg-gray-50 text-gray-600">
               <tr>
                 <Th>Sl. No.</Th>
@@ -19,7 +19,7 @@ export const TrackingHistory = ({trackingHistory}:{trackingHistory:any[]}) => {
                 const isoDateString = history.oldStatusDate;
                 const formattedDate = moment(isoDateString).format('DD MMM YYYY');
                 return <tr key={index+1} className="hover:bg-gray-50/70">
-                  <Td className="w-20">{index+1}</Td>
+                  <Td className="w-20" >{index+1}</Td>
                   <Td className="whitespace-nowrap w-40">{formattedDate}</Td>
                   <Td className="w-20">{`${history.invoiceId}`}</Td>
                   <Td className="w-20">{history.pieces}</Td>
