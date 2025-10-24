@@ -16,7 +16,7 @@ export interface Charges {
     Customs: ChargeItem;
     Clearance: ChargeItem;
     OtherCharges: ChargeItem;
-    Discount: ChargeItem;
+    //Discount: ChargeItem;
     [key: string]: ChargeItem; // Index signature for easier access
 }
 
@@ -35,10 +35,9 @@ export interface BookingFormData {
     ReceiverMobile2: string;
     ReceiverAddress: string;
     ReceiverArea: string;
-    
     ItemDetails: string;
     OtherDetails: string;
-
+    discount: string;
     NoOfPieces: string;
     Branch: string;
     BookingDate: string; // ISO string format 'YYYY-MM-DD'

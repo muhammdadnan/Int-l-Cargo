@@ -1,16 +1,16 @@
 export function Divider({ className = "" }) {
-  return <div className={`mt-1 h-px bg-gray-200 ${className}`} />;
+  return <div  className={`mt-3 h-0.5 bg-gradient-to-r from-red-500 via-blue-500 to-orange-400 ${className}`} />;
 }
 
 export function Th({ children }) {
   return (
-    <th className="px-4 py-3  font-semibold uppercase tracking-wide">
+    <th className="px-4 py-3  font-semibold uppercase tracking-wide" >
       {children}
     </th>
   );
 }
 export function Td({ children, className = "" }) {
-  return <td className={`px-4 py-3 text-3xl ${className}`}>{children}</td>;
+  return <td className={`px-4 py-3 text-3xl  ${className}`}>{children}</td>;
 }
 
 export function Field({ label, value, link = "" }) {

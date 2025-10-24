@@ -23,19 +23,29 @@ const BookingList = () => {
 const role = sessionStorage.getItem("role") || "user";
 
 
-  const getBookings = async () => { 
-    try {
-      setbookingLoading(true)
-      const response = await axios.get(AppRoutes.allBookings);
-      setBookings(response?.data?.data?.bookings || []);
-    } catch (error) {
-      const err = error?.response?.data?.errors;
-      if (err?.general) toast.error(err?.general);
-      if (!err) toast.error('Something went wrong');
-    } finally {
-            setbookingLoading(false)
-    }
-  };
+const getBookings = async () => { 
+  try {
+    setbookingLoading(true);
+    const response = await axios.get(AppRoutes.allBookings);
+    const bookingsData = response?.data?.data?.bookings || [];
+
+    // ✅ Extract numeric part before "/" and sort descending
+    const sortedBookings = bookingsData.sort((a, b) => {
+      const numA = parseInt(a.InvoiceNo?.split("/")[0]) || 0;
+      const numB = parseInt(b.InvoiceNo?.split("/")[0]) || 0;
+      return numB - numA; // descending
+    });
+
+    setBookings(sortedBookings);
+  } catch (error) {
+    const err = error?.response?.data?.errors;
+    if (err?.general) toast.error(err?.general);
+    if (!err) toast.error('Something went wrong');
+  } finally {
+    setbookingLoading(false);
+  }
+};
+
 
   useEffect(() => {
     getBookings();
@@ -151,9 +161,9 @@ const role = sessionStorage.getItem("role") || "user";
 
       //setMessage(res.data.message || "File uploaded successfully!");
       toast.success(res.data.message || "File uploaded successfully!")
-      setTimeout(() => {
-  window.location.reload();
-}, 1000);
+//       setTimeout(() => {
+//   window.location.reload();
+// }, 1000);
 
     } catch (err) {
       //setMessage("Upload failed: " + err.message);

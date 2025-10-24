@@ -186,7 +186,7 @@ export const handlePdfSave = (
   const headerHeight1 = 7; // header ki height (adjustable)
   doc.setFillColor(200, 255, 200); // Light blue background
   doc.rect(15, y - 5, 185, headerHeight1, "F");
-  doc.setFontSize(20);
+  doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
   doc.text("Pieces", col1X, y);
   doc.text("Item Details", col2X, y);
@@ -203,7 +203,7 @@ export const handlePdfSave = (
 
   // Column 1 — Pieces
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(20);
+  doc.setFontSize(12);
   doc.text(safeText(formData.NoOfPieces), col1X+5, y+5);
 
   // Column 2 — Item Details (wrapped)
@@ -299,17 +299,17 @@ export const handlePdfSave = (
     },
   });
 
-  const finalY = doc.lastAutoTable?.finalY+15 || tableStartY ;
+  const finalY = doc.lastAutoTable?.finalY+5 || tableStartY ;
 
   const notesBoxX = 0;
   const notesBoxWidth = 120;
-  const notesY = finalY ;
+  const notesY = finalY;
   // const boxHeight = 30;
-  const boxHeight = 21;
+  const boxHeight = 20;
 
   // Draw Notes Box
   doc.setFillColor(215, 234, 249);
-  doc.rect(notesBoxX, notesY, notesBoxWidth, boxHeight, "F");
+  doc.rect(notesBoxX, notesY, notesBoxWidth, boxHeight+15, "F");
 
   // Set styles
   doc.setTextColor(0, 0, 0);
@@ -349,20 +349,22 @@ export const handlePdfSave = (
     doc.setFillColor(215, 234, 249);
     // doc.setFillColor(33, 91, 168);
     doc.setTextColor(0, 0, 0);
-    doc.rect(120, y, 90, 10, "F");
+    doc.rect(120, y, 100, 100, "F");
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text(item.label, 125, y + 5);
-    doc.setFontSize(14);
-    doc.text(item.value, 205, y + 5, { align: "right" });
+    doc.text(item.label, 120, y + 7);
+    doc.setFontSize(12);
+    // doc.text(item.value, 205, y + 5, { align: "left" });
+    doc.text(item.value, 160, y+7, { align: "left" });
   });
 
   // Footer Box (Head Office & Branches)
   function drawFooterBlock(title, address, phone, startX, startY) {
-    doc.setFontSize(10);
+    doc.setFontSize(12);
 
     // Title
     doc.setFont("helvetica", "bold");
+    doc.setTextColor("white");
     doc.text(title, startX, startY);
     let currentY = startY + 5;
 
@@ -378,14 +380,14 @@ export const handlePdfSave = (
     );
 
     // First address line (label + first line)
-    doc.text(addressLabel, startX, currentY);
+    doc.text("", startX, currentY);
     doc.text(addressLines[0], startX + addressLabelWidth, currentY);
     currentY += 5;
 
     // Remaining address lines
     for (let i = 1; i < addressLines.length; i++) {
       doc.text(addressLines[i], startX + addressLabelWidth, currentY);
-      currentY += 5;
+      currentY += 0;
     }
 
     // Phone
@@ -399,12 +401,12 @@ export const handlePdfSave = (
     );
 
     // First phone line (label + first line)
-    doc.text(phoneLabel, startX, currentY);
+    doc.text("", startX, currentY);
     doc.text(phoneLines[0], startX + phoneLabelWidth, currentY);
     currentY += 5;
 
     // Remaining phone lines
-    for (let i = 1; i < phoneLines.length; i++) {
+    for (let i = 1; i < phoneLines; i++) {
       doc.text(phoneLines[i], startX + phoneLabelWidth, currentY);
       currentY += 5;
     }
@@ -421,12 +423,12 @@ export const handlePdfSave = (
   //   footerStartY = 20; // reset Y for new page
   //   }
   const pageHeight = doc.internal.pageSize.getHeight();
-  const footerReservedHeight = 50;
+  const footerReservedHeight = 25;
   let footerStartY = pageHeight - footerReservedHeight;
 
   // Optional: draw background if you want the footer to stand out
   doc.setFillColor(33, 91, 168);
-  doc.rect(0, footerStartY - 5, 210, 60, "F"); // 60 is approx footer height
+  doc.rect(0, footerStartY - 15, 210, 50, "F"); // 60 is approx footer height
 
   // Now render footer blocks
   let footerYY = footerStartY;
@@ -436,23 +438,23 @@ export const handlePdfSave = (
     "Dammam Al-Khaleej, Street 22, Double Road Opposite Boys School Near Al-Ahli Bank ATM",
     "+966591080611 | +966590878234 | +966590056199",
     10,
-    footerYY
+    footerYY -5
   );
 
   footerYY = drawFooterBlock(
     "Al-Thuqbah Office:",
-    "Al-Thuqbah, Rabigh Street 18, Opposite Fish Market, Near Gr",
-    "+966580129991 | +966553441378 | +966591080611",
+    "",
+    "",
     10,
-    footerYY
+    footerYY -2
   );
 
   footerYY = drawFooterBlock(
     "AL HASSA(-HOFUF) Office:",
-    "Al-Hofuf Opposite General Court, Al Koot Al Naathil Mosque",
-    "+966599039931 | +966539328832 | +966591080611",
+    "",
+    "",
     10,
-    footerYY
+    footerYY -10
   );
 
   // ========== AMOUNT IN WORDS ==========

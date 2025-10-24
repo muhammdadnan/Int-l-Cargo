@@ -36,6 +36,7 @@ const Login = () => {
       //   setEmailErr('Please enter a valid email address!');
       //   return;
       // }
+     
     const response = await axios.post(AppRoutes.login,{email,password})
     const data = response.data;
     console.log("userss " ,response.data)
@@ -69,6 +70,16 @@ const Login = () => {
     //       navigate('/services');
     //     }
     //   }, [navigate]);
+     const BackToHomeButton = ({ navigate }: { navigate: (path: string) => void }) => (
+    <div className="mt-8 flex justify-center">
+        <button
+            onClick={() => navigate('/')}
+            className="rounded-md bg-blue-700 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+            Back to Pak Chinar Int'I Cargo Home
+        </button>
+    </div>
+);
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="absolute inset-0 z-0">
@@ -152,6 +163,7 @@ const Login = () => {
               "Login"
             )}
           </button>
+          <BackToHomeButton navigate={navigate}/>
         </div>
       </form>
     </div>

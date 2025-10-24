@@ -8,7 +8,7 @@ import { handleSend } from '@/lib/helper/sendPdf';
 import PhoneNumberInput from './PhoneNumberInput';
 import { BookingFormData, ChargeItem, Charges} from '@/lib/helper/type'
 
-const InvoiceForm = ({cityList,branchList,loadingList}) => {
+const InvoiceForm = ({ cityList, branchList, loadingList, role = 'user' }: { cityList: any; branchList: any; loadingList: boolean; role?: string }) => {
       
       const [errors, setErrors] = useState<Record<string, string>>({});
       const  [isSubmitted,setIsSubmitted] = useState(false)
@@ -22,13 +22,11 @@ const InvoiceForm = ({cityList,branchList,loadingList}) => {
 
     const [formData, setFormData] = useState<BookingFormData>({
       BiltyNo: "",
-      
       SenderName: "",
       SenderMobile: "",
       SenderIdNumber:"",
       SenderAddress: "",
       SenderArea: "",
-      
       ReceiverName: "",
       ReceiverMobile1: "",
       ReceiverMobile2: "",
@@ -36,9 +34,9 @@ const InvoiceForm = ({cityList,branchList,loadingList}) => {
       ReceiverArea: "",
       ItemDetails:"",
       OtherDetails:"",
-      
      totalWeight:"",
       NoOfPieces: "",
+      discount:"",
       Branch: "",
       BookingDate:new Date().toISOString().split('T')[0],
       //  BiltyNo: "",
@@ -51,7 +49,7 @@ const InvoiceForm = ({cityList,branchList,loadingList}) => {
           Customs: { enabled: false, unitRate: '', qty: '', total: '' },
           Clearance: { enabled: false, unitRate: '', qty: '', total: '' },
           OtherCharges: { enabled: false, unitRate: '', qty: '', total: '' },
-          Discount: {enabled: false, unitRate: '', qty: '', total: ''  },
+          // Discount: {enabled: false, unitRate: '', qty: '', total: ''  },
       },
       SubTotal:"",
       Vat:"",
@@ -221,18 +219,17 @@ setErrors({});
       SenderIdNumber:"",
       SenderAddress: "",
       SenderArea: "",
-      
       ReceiverName: "",
       ReceiverMobile1: "",
       ReceiverMobile2: "",
       ReceiverAddress: "",
       ReceiverArea: "",
-      
       ItemDetails:"",
       OtherDetails:"",
       totalWeight:"",
       NoOfPieces: "",
       Branch: "",
+      discount:"",
       BookingDate:new Date().toISOString().split('T')[0],
       //  BiltyNo: "",
       //  InvoiceNo: "",
@@ -244,7 +241,7 @@ setErrors({});
           Customs: { enabled: false, unitRate: '', qty: '', total: '' },
           Clearance: { enabled: false, unitRate: '', qty: '', total: '' },
           OtherCharges: { enabled: false, unitRate: '', qty: '', total: '' },
-          Discount: {enabled: false, unitRate: '', qty: '', total: '' },
+          // Discount: {enabled: false, unitRate: '', qty: '', total: '' },
       },
       SubTotal:"",
       Vat:"",
@@ -321,7 +318,7 @@ setErrors({});
             return sum + total;
           }, 0);
           // Apply discount only if enabled
-          const discount = parseFloat(formData.Charges.Discount?.total) || 0;
+          const discount = parseFloat(formData.discount) || 0;
           // console.log(discount);
             
 
@@ -755,7 +752,7 @@ setErrors({});
                     className="border rounded px-2 py-1 bg-gray-100"
                     />
                 </div>
-        {/* Vat in percent */}
+                {/* Subtotal */}
                 <div className="grid grid-cols-6 gap-2 items-center mt-1">
                     <div>
                         <input 
@@ -768,7 +765,26 @@ setErrors({});
                         className="h-4 w-4 text-blue-600"
                         />
                     </div>
-                    <div className="text-sm font-medium text-gray-700">Vat</div>
+    
+                    <div className="text-sm font-medium text-gray-700">Discount</div>
+                    <div></div>
+                    <div></div>
+                    <input 
+                        type="text"
+                        name="discount"
+                        value={`( ${formData.discount} )`}
+                  onChange={handleChange}
+                  readOnly={isSubmitted && !isEditClicked}
+                        className="border rounded px-2 py-1 bg-gray-100"
+                    />
+                </div>
+
+
+                {/* adnan code edited */}
+    <div className="grid grid-cols-6 gap-2 items-center mt-4 font-semibold text-gray-800">
+<div></div>
+ <div className="text-sm font-medium text-gray-700">Vat</div>
+                    
                     <div></div>
                     <div></div>
                     <input 
@@ -779,7 +795,10 @@ setErrors({});
                   readOnly={isSubmitted && !isEditClicked}
                         className="border rounded px-2 py-1 bg-gray-100"
                     />
-                </div>
+
+
+    </div>
+    {/* adnan code edited */}
                 {/* total Invoice */}
                 <div className="grid grid-cols-6 gap-2 items-center mt-4 font-semibold text-gray-800">
                 <div></div>
@@ -882,116 +901,116 @@ setErrors({});
             </div>
             
           }
-              <div className="flex flex-wrap gap-4 justify-center pt-4">
-                  {[
-                  // {label:"Save & Print"},
-                  // "Save PDF",
-                  // "Edit Invoice",
-                  // "Del. Invoice",
-                  // "PDF To Whatsapp",
-                  {
-                    label: "Save & Print",
-                      onClick: () => {
-                        if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
-                          handlePdfSave(formData, 'Save&PRINT','Shipment in Godown',formData.AmountInWords)
-                        }
-                        else {
-                          toast.error("Cannot Print PDF without Tracking Id,Invoice No,Branch and City")
-                        }
-                      },
-                  },
-                  {
-                    label: "Save PDF",
-                    onClick: () =>  {
-                       if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
-                        handlePdfSave(formData, 'SavePDF','Shipment in Godown',formData.AmountInWords)
-                      }
-                      else {
-                        toast.error("Cannot create PDF without Tracking Id,Invoice No,Branch and City")
-                      }
-                    },
-                  },
-                  {
-                    label: "Edit Invoice",
-                    onClick: () =>  {
-                    if (formData.BiltyNo) {
-                    setIsEditClicked(true)
-                    }
-                    else {
-                      toast.error("Cannot edit fields without Bilty and Invoice No")
-                    }
-                    },
-                    // isLoading:isEditClicked
-                  },
-                  {
-                    label: "Del. Invoice",
-                    onClick: () => handleDelete(formData.BiltyNo),
-                    isLoading: isDeleting
-                  },
-                  {
-                    label: "PDF To Whatsapp",
-                    
-                    isLoading:whatsappLoading
-                  },
-            ].map(({ label, onClick, isLoading }, index) => {
-                    {
-                    if (label === 'PDF To Whatsapp') {
-                      
-                    return    <button
-                      key={index}
-                      onClick={() => {
-                          if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
-                        const file = handlePdfSave(formData, "SendToWhatsapp", 'Shipment in Godown', formData.AmountInWords);
-                      if(file) handleSend(formData,file,setwhatsappLoading)
-                      }
-                      else {
-                        toast.error("Cannot send PDF without Tracking Id,Invoice No,Branch and City")
-                      }
-                      
-                    }}
-                      disabled={isLoading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md cursor-pointer"
-                  >
-                      {isLoading ? (
-            <div className="flex justify-center">
-              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
-            </div>
-          ) : (
-            label
-          )}
-                  </button>
-                    }
-                  }
-                    return <button
-                      key={index}
-                      onClick={onClick}
-                      disabled={isLoading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md cursor-pointer"
-                  >
-                      {isLoading ? (
-            <div className="flex justify-center">
-              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
-            </div>
-          ) : (
-            label
-          )}
-                  </button>
-                  })}
+             <div className="flex flex-wrap gap-4 justify-center pt-4">
+  {[
+    {
+      label: "Save & Print",
+      roles: ["admin", "user"], // ✅ visible to both
+      onClick: () => {
+        if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
+          handlePdfSave(formData, "Save&PRINT", "Shipment in Godown", formData.AmountInWords);
+        } else {
+          toast.error("Cannot Print PDF without Tracking Id, Invoice No, Branch and City");
+        }
+      },
+    },
+    {
+      label: "Save PDF",
+      roles: ["admin", "user"], // ✅ visible to both
+      onClick: () => {
+        if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
+          handlePdfSave(formData, "SavePDF", "Shipment in Godown", formData.AmountInWords);
+        } else {
+          toast.error("Cannot create PDF without Tracking Id, Invoice No, Branch and City");
+        }
+      },
+    },
+    {
+      label: "Edit Invoice",
+      roles: ["admin"], // 🔒 admin only
+      onClick: () => {
+        if (formData.BiltyNo) {
+          setIsEditClicked(true);
+        } else {
+          toast.error("Cannot edit fields without Bilty and Invoice No");
+        }
+      },
+    },
+    {
+      label: "Del. Invoice",
+      roles: ["admin"], // 🔒 admin only
+      onClick: () => handleDelete(formData.BiltyNo),
+      isLoading: isDeleting,
+    },
+    {
+      label: "PDF To Whatsapp",
+      roles: ["admin"], // 🔒 admin only
+      isLoading: whatsappLoading,
+    },
+  ]
+    // filter by role
+    .filter(({ roles }) => roles.includes(role))
+    .map(({ label, onClick, isLoading }, index) => {
+      if (label === "PDF To Whatsapp") {
+        return (
+          <button
+            key={index}
+            onClick={() => {
+              if (formData.BiltyNo && formData.Branch && formData.City && formData.InvoiceNo) {
+                const file = handlePdfSave(formData, "SendToWhatsapp", "Shipment in Godown", formData.AmountInWords);
+                if (file) handleSend(formData, file, setwhatsappLoading);
+              } else {
+                toast.error("Cannot send PDF without Tracking Id, Invoice No, Branch and City");
+              }
+            }}
+            disabled={isLoading}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md cursor-pointer"
+          >
+            {isLoading ? (
+              <div className="flex justify-center">
+                <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
               </div>
+            ) : (
+              label
+            )}
+          </button>
+        );
+      }
+
+      // default button rendering
+      return (
+        <button
+          key={index}
+          onClick={onClick}
+          disabled={isLoading}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md cursor-pointer"
+        >
+          {isLoading ? (
+            <div className="flex justify-center">
+              <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
+              </svg>
+            </div>
+          ) : (
+            label
+          )}
+        </button>
+      );
+    })}
+</div>
+
         </div>
         
       </div>

@@ -64,7 +64,7 @@ const HeroSection = () => {
       />
       <Button
         onClick={handleTrack}
-        className="bg-brand-orange hover:bg-brand-orange-light text-white font-medium px-12 py-4 whitespace-nowrap mt-5 sm:mt-0"
+        className="bg-red-500 hover:bg-red-600 text-white font-medium px-12 py-4 whitespace-nowrap mt-5 sm:mt-0"
       >
         TRACK IT
       </Button>

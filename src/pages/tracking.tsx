@@ -140,7 +140,7 @@ export default function Tracking() {
         </div>
 
         {/* System title */}
-        <p className="mt-2 text-center text-3xl tracking-wider text-gray-500">
+        <p className="mt-2 text-center text-3xl tracking-wider text-red-600">
           Consignment Tracking System
         </p>
 
@@ -150,7 +150,7 @@ export default function Tracking() {
   <span className="text-blue-700">{invoiceNumber}</span>
 </h1>
 
-<Divider className="mx-auto mt-2 max-w-xs" />
+<Divider className="mx-auto mt-2 max-w-xs " />
 
 {trackingDetails.length > 0 &&
   trackingDetails.map((detail, index) => {
@@ -160,7 +160,7 @@ export default function Tracking() {
     );
 
     return (
-      <div key={index} className="mt-6 border rounded-lg p-4 shadow-sm bg-white">
+      <div key={index} className="mt-6 border rounded-lg p-4 shadow-sm mx-40 bg-white-50">
         {/* Tracking Detail */}
         <TrackingDetails
           trackingData={trackingData}
