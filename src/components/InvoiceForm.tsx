@@ -772,7 +772,7 @@ setErrors({});
                     <input 
                         type="text"
                         name="discount"
-                        value={`( ${formData.discount} )`}
+                        value={-`${formData.discount}`|| 0}
                   onChange={handleChange}
                   readOnly={isSubmitted && !isEditClicked}
                         className="border rounded px-2 py-1 bg-gray-100"
