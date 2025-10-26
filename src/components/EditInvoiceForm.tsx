@@ -7,6 +7,7 @@ import { handlePdfSave } from '../lib/helper/pdfGenerator'
   import {useNavigate} from 'react-router-dom'
 import { handleSend } from '../lib/helper/sendPdf';
 import PhoneNumberInput from './PhoneNumberInput';
+import { BookingFormData, ChargeItem, Charges} from '@/lib/helper/type'
   const EditInvoiceForm = ({ id,
     branchList,
     cityList,
@@ -96,16 +97,12 @@ import PhoneNumberInput from './PhoneNumberInput';
         qty: bookingData.Charges.OtherCharges.qty || '',
         total: bookingData.Charges.OtherCharges.total || '',
       },
-      Discount: {
-        enabled: bookingData.Charges.Discount.enabled || false,
-        unitRate: bookingData.Charges.Discount.unitRate || '',
-        qty: bookingData.Charges.Discount.qty || '',
-        total: bookingData.Charges.Discount.total || '',
-      },
+   
     },
     SubTotal: bookingData.SubTotal || '',
     Vat: bookingData.Vat || '',
     VatTotal: bookingData.VatTotal || '',
+    Discount: bookingData.Discount || '',
 
     AmountInWords: bookingData.AmountInWords || '',
     InvoiceTotal: bookingData.InvoiceTota || '',
@@ -328,92 +325,77 @@ setShowNewShipment(true);
     }
 
 useEffect(() => {
-  interface ChargeType {
-    enabled: boolean;
-    unitRate: string;
-    qty: string;
-    total: string;
-  }
   
-  interface Charges {
-    FreightCharges: ChargeType;
-    Insurance: ChargeType;
-    Packing: ChargeType;
-    Customs: ChargeType;
-    Clearance: ChargeType;
-    OtherCharges: ChargeType;
-    Discount: ChargeType;
-  }
+  const allCharges = Object.entries(formData.Charges) as [keyof Charges, ChargeItem][];
+       
+  // console.log(allCharges);
+          let totalCharges = allCharges.reduce((sum, [key,value]) => {
+            
+            if (key === 'Discount') return sum; // Skip Discount
+            const total = parseFloat(value.total) || 0;
+            return sum + total;
+          }, 0);
+          // Apply discount only if enabled
+          const Discount = parseFloat(formData.Discount) || 0;
+           console.log(Discount);
+            
+
+          // subtotal -= discount;
+          // ✅ Calculate total of enabled charges (excluding Discount)
+  const selectedCharges = allCharges.filter(
+    ([key, value]) => value.enabled && key !== 'Discount'
+  );
   
- const allCharges = Object.entries(formData.Charges) as [keyof Charges, ChargeItem][];
-           // console.log(allCharges);
-           let totalCharges = allCharges.reduce((sum, [key,value]) => {
-             
-             if (key === 'Discount') return sum; // Skip Discount
-             const total = parseFloat(value.total) || 0;
-             return sum + total;
-           }, 0);
-           // Apply discount only if enabled
-           const discount = parseFloat(formData.Charges.Discount?.total) || 0;
-           // console.log(discount);
-             
- 
-           // subtotal -= discount;
-           // ✅ Calculate total of enabled charges (excluding Discount)
-   const selectedCharges = allCharges.filter(
-     ([key, value]) => value.enabled && key !== 'Discount'
-   );
-   
-           const subtotal = Math.max(0, totalCharges)
-           
+          const subtotal = Math.max(0, totalCharges)
           
-       // const selectedCharges = allCharges.filter(([key,value]) => value.enabled);
-       // console.log(selectedCharges);
-       
-           // let selectedTotal = selectedCharges.reduce((sum, [key,charge]) => {
-           //   const total = parseFloat(charge.total) || 0;
-           //   return sum + total ;
-           // }, 0);
-            let selectedTotal = selectedCharges.reduce((sum, [_, charge]) => {
-     const total = parseFloat(charge.total) || 0;
-     return sum + total;
-   }, 0);
- 
-    // ✅ VAT should apply only on enabled, non-discount charges
-   const vatPercent = parseFloat(formData.Vat) || 0;
-   const vatTotal = (selectedTotal * vatPercent) / 100;
-       
-           // if(selectedTotal > 0) selectedTotal -=discount
-           // selectedTotal -=discount
-           // const vatPercent = parseFloat(formData.Vat) || 0;
-           // const vatTotal = (selectedTotal * vatPercent / 100);
          
-         // ✅ Apply discount AFTER VAT calculation
-   let discountApply;
-         if (selectedTotal){
-       discountApply = subtotal + vatTotal;
-         }
-         else{
-           discountApply = subtotal - discount
-         } 
-   const invoiceTotal = discountApply;
- 
-   const amountInWords = numberToWords(invoiceTotal.toFixed(2));
- 
-           // const invoiceTotal = subtotal + vatTotal ;
+      // const selectedCharges = allCharges.filter(([key,value]) => value.enabled);
+      // console.log(selectedCharges);
+      
+          // let selectedTotal = selectedCharges.reduce((sum, [key,charge]) => {
+          //   const total = parseFloat(charge.total) || 0;
+          //   return sum + total ;
+          // }, 0);
+           let selectedTotal = selectedCharges.reduce((sum, [_, charge]) => {
+    const total = parseFloat(charge.total) || 0;
+    return sum + total;
+  }, 0);
+
+   // ✅ VAT should apply only on enabled, non-discount charges
+  const vatPercent = parseFloat(formData.Vat) || 0;
+  const vatTotal = ((selectedTotal - Discount) * vatPercent) / 100;
+      
+          // if(selectedTotal > 0) selectedTotal -=discount
+          // selectedTotal -=discount
+          // const vatPercent = parseFloat(formData.Vat) || 0;
+          // const vatTotal = (selectedTotal * vatPercent / 100);
         
-         // const amountInWords = numberToWords(invoiceTotal.toFixed(2));
-         // console.log(amountInWords);
-         
-           setFormData(prev => ({
-             ...prev,
-             SubTotal: subtotal.toFixed(2),
-             VatTotal: vatTotal.toFixed(2),
-             InvoiceTotal: invoiceTotal.toFixed(2),
-             AmountInWords:amountInWords
-           }));
-         }, [formData.Charges, formData.Vat]);
-     
+        // ✅ Apply discount AFTER VAT calculation
+  let discountApply;
+        if (selectedTotal){
+      discountApply = subtotal + vatTotal;
+        }
+        else{
+          discountApply = subtotal - Discount
+        } 
+  const invoiceTotal = discountApply;
+
+  const amountInWords = numberToWords(invoiceTotal.toFixed(2));
+
+          // const invoiceTotal = subtotal + vatTotal ;
+       
+        // const amountInWords = numberToWords(invoiceTotal.toFixed(2));
+        // console.log(amountInWords);
+        
+          setFormData(prev => ({
+            ...prev,
+            SubTotal: subtotal.toFixed(2),
+            VatTotal: vatTotal.toFixed(2),
+            InvoiceTotal: invoiceTotal.toFixed(2),
+            AmountInWords:amountInWords
+          }));
+        }, [formData.Charges, formData.Vat, formData.Discount]);
+    
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-6">
@@ -795,7 +777,31 @@ useEffect(() => {
                     readOnly
                     className="border rounded px-2 py-1 bg-gray-100"
                     />
+                                                            <div></div>
+                                                            <div>      <input 
+                        disabled
+                        type="checkbox"
+                        //   checked={chargeData.enabled}
+                        //   onChange={handleChange}
+                        //   data-charge={chargeKey}
+                        data-field="enabled"
+                        className="h-4 w-4 text-blue-600"
+                        /></div>
+
+                    <div className="text-sm font-medium text-gray-700">Discount</div>
+                    <div></div>
+                                        <div></div>
+
+                    <input 
+                        type="text"
+                        name="Discount"
+                        value={-`${formData.Discount}`|| 0}
+                  onChange={handleChange}
+                  readOnly={isSubmitted && !isEditClicked}
+                        className="border rounded px-2 py-1 bg-gray-100"
+                    />
                 </div>
+                
         {/* Vat in percent */}
                 <div className="grid grid-cols-6 gap-2 items-center mt-1">
                     <div>
@@ -812,14 +818,28 @@ useEffect(() => {
                     <div className="text-sm font-medium text-gray-700">Vat</div>
                     <div></div>
                     <div></div>
-                    <input 
-                        type="text"
-                        name="Vat"
-                        value={formData.Vat}
-                  onChange={handleChange}
-                  readOnly={readonlyMode}
-                        className="border rounded px-2 py-1 bg-gray-100"
-                    />
+       <input 
+  type="text"
+  name="Vat"
+  value={formData.Vat}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    // sirf number aur decimal allow karo, minus disallow
+    if (/^-/.test(value)) return; // agar minus se start ho to ignore
+
+    // optional: agar sirf numbers aur ek dot allow karni hai
+    if (!/^\d*\.?\d*$/.test(value)) return;
+
+    setFormData({
+      ...formData,
+      Vat: value,
+    });
+  }}
+  readOnly={readonlyMode}
+  className="border rounded px-2 py-1 bg-gray-100"
+/>
+
                 </div>
                 {/* total vat */}
                 <div className="grid grid-cols-6 gap-2 items-center mt-4 font-semibold text-gray-800">

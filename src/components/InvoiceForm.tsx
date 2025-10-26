@@ -8,7 +8,7 @@ import { handleSend } from '@/lib/helper/sendPdf';
 import PhoneNumberInput from './PhoneNumberInput';
 import { BookingFormData, ChargeItem, Charges} from '@/lib/helper/type'
 
-const InvoiceForm = ({ cityList, branchList, loadingList, role = 'user' }: { cityList: any; branchList: any; loadingList: boolean; role?: string }) => {
+const InvoiceForm = ({ cityList, branchList, loadingList, role = sessionStorage.getItem("role") || "user" }: { cityList: any; branchList: any; loadingList: boolean; role?: string }) => {
       
       const [errors, setErrors] = useState<Record<string, string>>({});
       const  [isSubmitted,setIsSubmitted] = useState(false)
@@ -36,7 +36,7 @@ const InvoiceForm = ({ cityList, branchList, loadingList, role = 'user' }: { cit
       OtherDetails:"",
      totalWeight:"",
       NoOfPieces: "",
-      discount:"",
+      Discount:"",
       Branch: "",
       BookingDate:new Date().toISOString().split('T')[0],
       //  BiltyNo: "",
@@ -229,7 +229,7 @@ setErrors({});
       totalWeight:"",
       NoOfPieces: "",
       Branch: "",
-      discount:"",
+      Discount:"",
       BookingDate:new Date().toISOString().split('T')[0],
       //  BiltyNo: "",
       //  InvoiceNo: "",
@@ -308,7 +308,16 @@ setErrors({});
         setIsDeleting(false)
       }
     }
+const [isVatActive, setIsVatActive] = useState(false);
+
+// 👇 2) Yeh chhota useEffect alag likho
+useEffect(() => {
+  const vatValue = parseFloat(formData.Vat) || 0;
+  setIsVatActive(vatValue < 0);
+}, [formData.Vat]);
    useEffect(() => {
+    setIsVatActive(parseFloat(formData.Vat) > 0);
+
   const allCharges = Object.entries(formData.Charges) as [keyof Charges, ChargeItem][];
           // console.log(allCharges);
           let totalCharges = allCharges.reduce((sum, [key,value]) => {
@@ -318,8 +327,8 @@ setErrors({});
             return sum + total;
           }, 0);
           // Apply discount only if enabled
-          const discount = parseFloat(formData.discount) || 0;
-          // console.log(discount);
+          const Discount = parseFloat(formData.Discount) || 0;
+           console.log(Discount);
             
 
           // subtotal -= discount;
@@ -345,7 +354,7 @@ setErrors({});
 
    // ✅ VAT should apply only on enabled, non-discount charges
   const vatPercent = parseFloat(formData.Vat) || 0;
-  const vatTotal = (selectedTotal * vatPercent) / 100;
+  const vatTotal = ((selectedTotal - Discount) * vatPercent) / 100;
       
           // if(selectedTotal > 0) selectedTotal -=discount
           // selectedTotal -=discount
@@ -358,7 +367,7 @@ setErrors({});
       discountApply = subtotal + vatTotal;
         }
         else{
-          discountApply = subtotal - discount
+          discountApply = subtotal - Discount
         } 
   const invoiceTotal = discountApply;
 
@@ -376,7 +385,7 @@ setErrors({});
             InvoiceTotal: invoiceTotal.toFixed(2),
             AmountInWords:amountInWords
           }));
-        }, [formData.Charges, formData.Vat]);
+        }, [formData.Charges, formData.Vat, formData.Discount]);
     
     
     return (
@@ -664,71 +673,66 @@ setErrors({});
                 <div>Total</div>
                 </div>
 
-                {Object.entries(formData.Charges).map(([chargeKey, chargeData], index) => {
-      if (chargeKey === "SubTotal") return null;
-                  
-      return (
-        <div key={chargeKey} className="grid grid-cols-6 gap-2 items-center mt-1">
-          <div>
-            {chargeKey === "Discount" ? (
-              <input 
-                disabled={true}
-                type="checkbox"
-                // checked={false}
-                // onChange={handleChange}
-                // data-charge={chargeKey}
-                // data-field="enabled"
-                className="h-4 w-4 text-blue-600"
-              />
-              
-            ) : (
-              
-                <input 
-                disabled={isSubmitted && !isEditClicked}
-                type="checkbox"
-                checked={chargeData.enabled}
-                onChange={handleChange}
-                data-charge={chargeKey}
-                data-field="enabled"
-                className="h-4 w-4 text-blue-600"
-              />
-              
-            ) } 
-          </div>
-          <div className="text-sm font-medium text-gray-700">{chargeKey}</div>
-          
-          <input 
-  type="number"
-  step="0.01"      // ✅ allows decimals
-  min="0"
-  value={chargeData.unitRate}
-  onChange={handleChange}
-  data-charge={chargeKey}
-  data-field="unitRate"
-  className="border rounded px-2 py-1"
-/>
+   {Object.entries(formData.Charges).map(([chargeKey, chargeData]) => {
+  if (chargeKey === "SubTotal") return null;
 
-         <input 
-  type="number"
-  step="0.01"      // ✅ allows decimal quantities too
-  min="0"
-  value={chargeData.qty}
-  onChange={handleChange}
-  data-charge={chargeKey}
-  data-field="qty"
-  className="border rounded px-2 py-1"
-/>
-
-          <input 
-            
-            type="text"
-            value={chargeData.total}
-            readOnly
-            className="border rounded px-2 py-1 bg-gray-100"
+  return (
+    <div key={chargeKey} className="grid grid-cols-6 gap-2 items-center mt-1">
+      <div>
+        {chargeKey === "Discount" ? (
+          <input
+            disabled={true}
+            type="checkbox"
+            className="h-4 w-4 text-blue-600"
           />
-        </div>
-      );
-    })}
+        ) : (
+          <input
+            type="checkbox"
+            checked={chargeData.enabled}
+            onChange={handleChange}
+            data-charge={chargeKey}
+            data-field="enabled"
+            className="h-4 w-4 text-blue-600"
+            // 👇 disable agar VAT zero hai ya form readonly mode me hai
+            disabled={!isVatActive || (isSubmitted && !isEditClicked)}
+          />
+        )}
+      </div>
+
+      <div className="text-sm font-medium text-gray-700">{chargeKey}</div>
+
+      <input
+        type="number"
+        step="0.01"
+        min="0"
+        value={chargeData.unitRate}
+        onChange={handleChange}
+        data-charge={chargeKey}
+        data-field="unitRate"
+        className="border rounded px-2 py-1"
+      />
+
+      <input
+        type="number"
+        step="0.01"
+        min="0"
+        value={chargeData.qty}
+        onChange={handleChange}
+        data-charge={chargeKey}
+        data-field="qty"
+        className="border rounded px-2 py-1"
+      />
+
+      <input
+        type="text"
+        value={chargeData.total}
+        readOnly
+        className="border rounded px-2 py-1 bg-gray-100"
+      />
+    </div>
+  );
+})}
+
         {/* Subtotal */}
                 <div className="grid grid-cols-6 gap-2 items-center mt-1">
                     <div>
@@ -771,8 +775,8 @@ setErrors({});
                     <div></div>
                     <input 
                         type="text"
-                        name="discount"
-                        value={-`${formData.discount}`|| 0}
+                        name="Discount"
+                        value={-`${formData.Discount}`|| 0}
                   onChange={handleChange}
                   readOnly={isSubmitted && !isEditClicked}
                         className="border rounded px-2 py-1 bg-gray-100"
@@ -790,7 +794,8 @@ setErrors({});
                     <input 
                         type="text"
                         name="Vat"
-                        value={formData.Vat}
+  value={`${formData.Vat}`|| 0}
+                        // value={formData.Vat}
                   onChange={handleChange}
                   readOnly={isSubmitted && !isEditClicked}
                         className="border rounded px-2 py-1 bg-gray-100"

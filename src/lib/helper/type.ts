@@ -37,7 +37,7 @@ export interface BookingFormData {
     ReceiverArea: string;
     ItemDetails: string;
     OtherDetails: string;
-    discount: string;
+    Discount: string;
     NoOfPieces: string;
     Branch: string;
     BookingDate: string; // ISO string format 'YYYY-MM-DD'

@@ -340,7 +340,7 @@ const getBookings = async () => {
           ? navigate(`/edit-booking/edit/${row._id}`) // admin can edit
           : navigate(`/edit-booking/edit/${row._id}`) // user can only view
       }
-      className="cursor-pointer text-green-600 hover:text-blue-800"
+      className="cursor-pointer text-green-600 hover:text-blue-800 xl:mt-12"
     >
       {role === "admin" ? "Edit Booking" : "View Booking"}
     </button>
@@ -351,7 +351,7 @@ const getBookings = async () => {
         onClick={() =>
           handleDelete(row._id, row.BiltyNo, row.status)
         }
-        className="cursor-pointer text-red-600 hover:text-blue-800"
+        className="cursor-pointer text-red-600 hover:text-blue-800 xl:mt-12"
       >
         {deleteLoadingId === row._id ? "Deleting..." : "Delete Booking"}
       </button>

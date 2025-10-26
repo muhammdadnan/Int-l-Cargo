@@ -309,7 +309,7 @@ export const handlePdfSave = (
 
   // Draw Notes Box
   doc.setFillColor(215, 234, 249);
-  doc.rect(notesBoxX, notesY, notesBoxWidth, boxHeight+15, "F");
+  doc.rect(notesBoxX, notesY, notesBoxWidth, boxHeight+50, "F");
 
   // Set styles
   doc.setTextColor(0, 0, 0);
